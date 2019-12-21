@@ -87,7 +87,7 @@ function init() {
     ],
     [
       function s() {
-        return [x, x - 1, x - width, x - 1 + width]
+        return [x, x - 1, x + width, x - 1 + width]
       },
       function s() {
         return [x, x - 1, x + width, x - 1 + width]
@@ -418,7 +418,7 @@ function init() {
         nextBlockPick()
       }
       startTimer()
-      start.innerHTML = 'Pause'
+      start.innerHTML = 'Paused'
       paused = false
       pause()
     } else {
