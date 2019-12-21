@@ -418,7 +418,7 @@ function init() {
         nextBlockPick()
       }
       startTimer()
-      start.innerHTML = 'Paused'
+      start.innerHTML = 'Pause'
       paused = false
       pause()
     } else {
@@ -448,7 +448,7 @@ function init() {
   }
 
   function resetFunc() {
-    domPause.innerHTML = 'Pause'
+    domPause.innerHTML = 'Paused'
     start.innerHTML = 'Play'
     active = []
     squares.forEach(square => square.classList.remove('active'))
