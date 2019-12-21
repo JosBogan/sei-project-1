@@ -5,29 +5,42 @@ function init() {
   const gameContainer = document.querySelector('.game_container')
   const start = document.querySelector('.start')
   const domScore = document.querySelector('.score')
+  // const sideBar = document.querySelector('.side_bar')
+  const next = document.querySelector('.next')
+  const domBank = document.querySelector('.bank')
+  const domPause = document.querySelector('.paused')
+  const theme = document.querySelector('#theme')
+  const pop = document.querySelector('#pop')
 
   // Variables 
 
   const height = 24
-  const width = 10
+  let width = 10
+  const sideBarDiff = 6
   const squares = []
+  const nextSquares = []
+  const bankSquares = []
   let playing = false
+  let paused = false
   let x
   let currentBlockInit
   let currentBlock
-  let timerId = null
-  let active = []
   let currentInitId
   let currentRotId
+  let nextBlockInit
+  let nextBlock
+  let nextInitId
+  let nextRotId
+  let timerId = null
+  let active = []
   let score = 0
   let speed = 500
   let levelUpScore = 250
-  // let colour
-  // let maroon = []
-  // let cyan = []
-  // let green = []
-  // let gold  = []
-  // let magenta = []
+  let bankedInit 
+  let bankedInitId
+  let bankedRotId
+  let banked = false
+  let bankBlock
 
   const tetriminos = [
     [
@@ -74,16 +87,16 @@ function init() {
     ],
     [
       function s() {
-        return [x, x + 1, x + width, x + 1 + width]
+        return [x, x - 1, x - width, x - 1 + width]
       },
       function s() {
-        return [x, x + 1, x + width, x + 1 + width]
+        return [x, x - 1, x + width, x - 1 + width]
       },
       function s() {
-        return [x, x + 1, x + width, x + 1 + width]
+        return [x, x - 1, x + width, x - 1 + width]
       },
       function s() {
-        return [x, x + 1, x + width, x + 1 + width]
+        return [x, x - 1, x + width, x - 1 + width]
       }
     ],
     [
@@ -140,30 +153,6 @@ function init() {
     return Math.floor(Math.random() * 4)
   }
 
-  // function randomColourGen() {
-  //   const rand = Math.floor(Math.random() * 5)
-  //   switch (rand) {
-  //     case 0:
-  //       return 'maroon'
-  //     case 1:
-  //       return 'magenta'
-  //     case 2:
-  //       return 'cyan'
-  //     case 3:
-  //       return 'green'
-  //     case 4:
-  //       return 'gold'
-  //   }
-  // }
-
-  // function seperateColours() {
-  //   maroon = document.querySelector('.maroon')
-  //   cyan = document.querySelector('.cyan')
-  //   magenta = document.querySelector('.magenta')
-  //   gold = document.querySelector('.gold')
-  //   green = document.querySelector('.green')
-  // }
-  
   function rotateBlock() {
     if (currentRotId === tetriminos[currentInitId].length - 1) {
       currentRotId = 0
@@ -191,6 +180,31 @@ function init() {
     currentRotId = randomRotationGen()
     currentBlockInit = tetriminos[currentInitId][currentRotId]
     currentBlock = currentBlockInit()
+    
+  }
+
+
+  function nextBlockPick() {
+    if (nextBlock) {
+      currentBlockInit = nextBlockInit
+      currentInitId = nextInitId
+      currentRotId = nextRotId
+    }
+    nextInitId = randomBlockGen()
+    nextRotId = randomRotationGen()
+    nextBlockInit = tetriminos[nextInitId][nextRotId]
+    width = 4
+    x = 6
+    nextBlock = nextBlockInit()
+    nextBlockPaint()
+    
+  }
+
+  function nextBlockPaint() {
+    nextSquares.forEach(square => square.classList.remove('active'))
+    nextBlock.forEach(index => nextSquares[index].classList.add('active'))
+    width = 10
+    resetX()
   }
 
   function gridCreate() {
@@ -209,10 +223,36 @@ function init() {
     })
   }
 
+  function nextGridCreate() {
+    for (let i = 0; i < width - sideBarDiff; i++) {
+      for (let i = 0; i < width - sideBarDiff; i++) {
+        const square = document.createElement('div')
+        square.classList.add('game_square')
+        // square.classList.add('next_block_square')
+        next.appendChild(square)
+        nextSquares.push(square)
+      }
+    }
+  }
+
+  function bankGridCreate() {
+    for (let i = 0; i < width - sideBarDiff; i++) {
+      for (let i = 0; i < width - sideBarDiff; i++) {
+        const square = document.createElement('div')
+        square.classList.add('game_square')
+        // square.classList.add('bank')
+        domBank.appendChild(square)
+        bankSquares.push(square)
+      }
+    }
+  }
+  
+
   function removeAndRepaint() {
     squares.forEach(square => square.classList.remove('active'))
     currentBlock.forEach(index => squares[index].classList.add('active'))
     active.forEach(index => squares[index].classList.add('active'))
+
   }
 
   function resetX() {
@@ -220,19 +260,21 @@ function init() {
   }
 
   function baseCollision() {
-    if (baseChecker() || blockChecker()) {
+    if ((baseChecker() || blockChecker()) && playing) {
+      pop.play()
       active = active.concat(currentBlock)
-      blockPick()
+      gameOverFunc()
       resetX()
       scoreFunc()
+      nextBlockPick()
     }
   }
 
   function scoreFunc() {
     active.sort((a, b) => a - b)
+    let n = 0
     for (let i = 0; i < height * width; i += width) {
       const rowComplete = active.filter(item => item >= i && item < (i + width))
-      let n = 0
       if (rowComplete.length === width) {
         n++
         for (let i = 0; i < rowComplete.length; i++) {
@@ -244,10 +286,10 @@ function init() {
             active[i] += width
           }
         }
-        score += 10
+        // score += 10
       }
-      score += (10 * n)
     }
+    score += (10 * (n * n))
     domScore.innerHTML = score
     speedUp()
   }
@@ -259,24 +301,57 @@ function init() {
     removeAndRepaint()
   }
 
-  function startTimer() {
-    timerId = setInterval(gravityTimer, speed)
-  }
-
-  function startFunc() {
-    playing = !playing
-    resetX()
-    blockPick()
-    startTimer()
-  }
 
   function speedUp() {
     if (score > levelUpScore) {
       speed -= 100
       clearInterval(timerId)
-      setInterval(gravityTimer, speed)
+      timerId = setInterval(gravityTimer, speed)
       levelUpScore *= 2
     }
+  }
+
+  function bankFunc() {
+    width = 4
+    const bankedX = x
+    x = 6
+    let passing
+    let passingInitId
+    let passingRotId
+    if (!banked) {
+      bankedInit = currentBlockInit
+      bankedRotId = currentRotId
+      bankedInitId = currentInitId
+      bankBlock = currentBlockInit()
+      bankBlock.forEach(index => bankSquares[index].classList.add('active'))
+      resetX()
+      nextBlockPick()
+      banked = !banked
+    } else {
+      width = 10 
+      x = bankedX
+      currentBlock = bankedInit()
+      if ((rightWallRotChecker() || leftWallRotChecker()) && (leftBlockRotChecker() || rightBlockRotChecker()) && !baseChecker()) {
+        x = 6
+        width = 4
+        passing = currentBlockInit
+        passingInitId = currentInitId
+        passingRotId = currentRotId
+        currentBlockInit = bankedInit
+        currentInitId = bankedInitId
+        currentRotId = bankedRotId
+        bankedInit = passing
+        bankedInitId = passingInitId
+        bankedRotId = passingRotId
+        bankBlock.forEach(index => bankSquares[index].classList.remove('active'))
+        bankBlock = bankedInit()
+        bankBlock.forEach(index => bankSquares[index].classList.add('active'))
+        x = bankedX
+      }
+    }
+    width = 10
+    currentBlock = currentBlockInit()
+    removeAndRepaint()
   }
   
 
@@ -320,6 +395,68 @@ function init() {
     return !currentBlock.some(index => active.includes(index))
   }
 
+  function startTimer() {
+    timerId = setInterval(gravityTimer, speed)
+  }
+
+  function pause() {
+    if (paused) {
+      domPause.style.display = 'block'
+    } else {
+      domPause.style.display = 'none'
+    }
+  }
+
+  function startFunc() {
+    if (!playing) {
+      theme.play()
+      playing = true
+      if (!paused) {
+        resetX()
+        resetFunc()
+        blockPick()
+        nextBlockPick()
+      }
+      startTimer()
+      start.innerHTML = 'Pause'
+      paused = false
+      pause()
+    } else {
+      theme.pause()
+      playing = false
+      clearInterval(timerId)
+      start.innerHTML = 'Play'
+      paused = true
+      pause()
+    }
+  }
+
+  function gameOverFunc(){
+    if (active.some(item => item < width * 5)) {
+      clearInterval(timerId)
+      tryAgainPopUp()
+      playing = !playing
+      start.innerHTML = 'Play'
+      theme.pause()
+      theme.currentTime = 0
+    }
+  }
+
+  function tryAgainPopUp() {
+    domPause.style.display = 'block'
+    domPause.innerHTML = 'Bad Luck, Try Again!'
+  }
+
+  function resetFunc() {
+    domPause.innerHTML = 'Pause'
+    start.innerHTML = 'Play'
+    active = []
+    squares.forEach(square => square.classList.remove('active'))
+    score = 0
+    domScore.innerHTML = score
+  }
+  
+
   // Event Handlers
 
   function keyDownEvents(e) {
@@ -337,6 +474,8 @@ function init() {
         timerId = setInterval(gravityTimer, 50)
       } else if (e.key === 'ArrowUp') {
         rotateBlock()
+      } else if (e.key === 'z') {
+        bankFunc()
       }
     }
   }
@@ -351,7 +490,9 @@ function init() {
     }
   }
 
+  nextGridCreate()
   gridCreate()
+  bankGridCreate()
 
   window.addEventListener('keyup', keyUpEvents)
   window.addEventListener('keydown', keyDownEvents)

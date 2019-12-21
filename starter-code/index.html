@@ -4,13 +4,25 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="styles/main.css">
     <script src="scripts/app.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Poppins&display=swap" rel="stylesheet">
     <title>WDI Project 1</title>
   </head>
   <body>
     <div class="page_container">
-      <div class="game_container"></div>
+      <div class= side_bar>
+        <button class="start">Play</button>
+        <h2 class="side_head">Next Block</h2>
+        <div class="next"></div>
+        <h2 class="side_head">Bank</h2>
+        <div class="bank"></div>
+        <h2 class="side_head">Score</h2>
+        <div class="score">0</div>
+      </div>
+      <div class="game_container">
+        <div class="paused">Paused</div>
+      </div>
     </div>
-    <button class="start">START</button>
-    <div class="score">0</div>
+    <audio id="theme" src="http://23.237.126.42/ost/tetris-gb/pvzzjeuq/02_A-Type%20Music%20%28version%201.1%29.mp3" loop></audio>
+    <audio id="pop" src="assets/Blop-Mark_DiAngelo-79054334.wav"></audio>
   </body>
 </html>
