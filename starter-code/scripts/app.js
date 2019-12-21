@@ -4,12 +4,14 @@ function init() {
 
   const gameContainer = document.querySelector('.game_container')
   const start = document.querySelector('.start')
+  const domScore = document.querySelector('.score')
 
   // Variables 
 
   const height = 24
   const width = 10
   const squares = []
+  let playing = false
   let x
   let currentBlockInit
   let currentBlock
@@ -18,8 +20,14 @@ function init() {
   let currentInitId
   let currentRotId
   let score = 0
-
-  // Variables
+  let speed = 500
+  let levelUpScore = 250
+  // let colour
+  // let maroon = []
+  // let cyan = []
+  // let green = []
+  // let gold  = []
+  // let magenta = []
 
   const tetriminos = [
     [
@@ -131,6 +139,30 @@ function init() {
   function randomRotationGen() {
     return Math.floor(Math.random() * 4)
   }
+
+  // function randomColourGen() {
+  //   const rand = Math.floor(Math.random() * 5)
+  //   switch (rand) {
+  //     case 0:
+  //       return 'maroon'
+  //     case 1:
+  //       return 'magenta'
+  //     case 2:
+  //       return 'cyan'
+  //     case 3:
+  //       return 'green'
+  //     case 4:
+  //       return 'gold'
+  //   }
+  // }
+
+  // function seperateColours() {
+  //   maroon = document.querySelector('.maroon')
+  //   cyan = document.querySelector('.cyan')
+  //   magenta = document.querySelector('.magenta')
+  //   gold = document.querySelector('.gold')
+  //   green = document.querySelector('.green')
+  // }
   
   function rotateBlock() {
     if (currentRotId === tetriminos[currentInitId].length - 1) {
@@ -140,7 +172,7 @@ function init() {
     }
     currentBlockInit = tetriminos[currentInitId][currentRotId]
     currentBlock = currentBlockInit()
-    if (rightWallRotChecker() || leftWallRotChecker()) {
+    if ((rightWallRotChecker() || leftWallRotChecker()) && (leftBlockRotChecker() || rightBlockRotChecker()) && !baseChecker()) {
       removeAndRepaint()
     } else {
       if (currentRotId === 0) {
@@ -198,6 +230,26 @@ function init() {
 
   function scoreFunc() {
     active.sort((a, b) => a - b)
+    for (let i = 0; i < height * width; i += width) {
+      const rowComplete = active.filter(item => item >= i && item < (i + width))
+      let n = 0
+      if (rowComplete.length === width) {
+        n++
+        for (let i = 0; i < rowComplete.length; i++) {
+          const index = active.indexOf(rowComplete[i])
+          active.splice(index, 1)
+        }
+        for (let i = 0; i < active.length; i++) {
+          if (active[i] < rowComplete[0]) {
+            active[i] += width
+          }
+        }
+        score += 10
+      }
+      score += (10 * n)
+    }
+    domScore.innerHTML = score
+    speedUp()
   }
 
   function gravityTimer() {
@@ -208,14 +260,25 @@ function init() {
   }
 
   function startTimer() {
-    timerId = setInterval(gravityTimer, 500)
+    timerId = setInterval(gravityTimer, speed)
   }
 
   function startFunc() {
+    playing = !playing
     resetX()
     blockPick()
     startTimer()
   }
+
+  function speedUp() {
+    if (score > levelUpScore) {
+      speed -= 100
+      clearInterval(timerId)
+      setInterval(gravityTimer, speed)
+      levelUpScore *= 2
+    }
+  }
+  
 
   function rightWallChecker() {
     return !currentBlock.some(index => index % width === width - 1)
@@ -260,28 +323,31 @@ function init() {
   // Event Handlers
 
   function keyDownEvents(e) {
-
-    if (e.key === 'ArrowRight' && rightWallChecker() && rightBlockChecker()) {
-      x++
-      currentBlock = currentBlockInit()
-      removeAndRepaint()
-    } else if (e.key === 'ArrowLeft' && leftWallChecker() && leftBlockChecker()) {
-      x--
-      currentBlock = currentBlockInit()
-      removeAndRepaint()
-    } else if (e.key === 'ArrowDown') {
-      clearInterval(timerId)
-      timerId = setInterval(gravityTimer, 50)
-    } else if (e.key === 'ArrowUp') {
-      rotateBlock()
+    if (playing) {
+      if (e.key === 'ArrowRight' && rightWallChecker() && rightBlockChecker()) {
+        x++
+        currentBlock = currentBlockInit()
+        removeAndRepaint()
+      } else if (e.key === 'ArrowLeft' && leftWallChecker() && leftBlockChecker()) {
+        x--
+        currentBlock = currentBlockInit()
+        removeAndRepaint()
+      } else if (e.key === 'ArrowDown') {
+        clearInterval(timerId)
+        timerId = setInterval(gravityTimer, 50)
+      } else if (e.key === 'ArrowUp') {
+        rotateBlock()
+      }
     }
   }
 
   function keyUpEvents(e) {
-    if (e.key === 'ArrowDown') {
-      clearInterval(timerId)
-      gravityTimer()
-      startTimer()
+    if (playing) {
+      if (e.key === 'ArrowDown') {
+        clearInterval(timerId)
+        gravityTimer()
+        startTimer()
+      }
     }
   }
 

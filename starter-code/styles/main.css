@@ -18,20 +18,21 @@
   display: flex;
   flex-wrap: wrap;
   background: blue;
+  overflow: hidden;
 }
 
 .game_square {
   width: 30px;
   height: 30px;
-  border: 0.5px solid black;
+  /* border: 1px solid black; */
 }
-
-/* .game_square:nth-child(n+2) {
+/* 
+.game_square:nth-child(n+2) {
   border-left: 1px solid black;
   border-bottom: 1px solid black;
-}
+} */
 
-.game_square:nth-child(n+10) {
+/* .game_square:nth-child(n+10) {
   border-right: 1px solid black;
 } */
 
@@ -39,13 +40,49 @@
 
 .active {
   background: pink;
-  /* -webkit-box-shadow: 0px 15px 0px 0px  rgb(173, 131, 138);
+  -webkit-box-shadow: 0px 15px 0px 0px  rgb(173, 131, 138);
   -moz-box-shadow: 0px 15px 0px 0px rgb(173, 131, 138);
-  box-shadow: 0px 15px 0px 0px rgb(173, 131, 138); */
-  /* border: 0px solid black; */
+  box-shadow: 0px 15px 0px 0px rgb(173, 131, 138);
+  border: 0px solid black;
 }
 
-.cheat {
+/* .maroon {
+  background: maroon;
+  -webkit-box-shadow: 0px 15px 0px 0px rgb(63, 0, 0);
+  -moz-box-shadow: 0px 15px 0px 0px  rgb(63, 0, 0);
+  box-shadow: 0px 15px 0px 0px  rgb(63, 0, 0);
+}
+
+.magenta {
+  background: magenta;
+  -webkit-box-shadow: 0px 15px 0px 0px rgb(128, 0, 128);
+  -moz-box-shadow: 0px 15px 0px 0px  rgb(128, 0, 128);
+  box-shadow: 0px 15px 0px 0px  rgb(128, 0, 128);
+}
+
+.cyan {
+  background: cyan;
+  -webkit-box-shadow: 0px 15px 0px 0px rgb(0, 128, 128);
+  -moz-box-shadow: 0px 15px 0px 0px  rgb(0, 128, 128);
+  box-shadow: 0px 15px 0px 0px  rgb(0, 128, 128);
+}
+
+.green {
+  background: mediumseagreen;
+  -webkit-box-shadow: 0px 15px 0px 0px rgb(36, 109, 69);
+  -moz-box-shadow: 0px 15px 0px 0px  rgb(36, 109, 69);
+  box-shadow: 0px 15px 0px 0px  rgb(36, 109, 69);
+}
+
+.gold {
+  background: goldenrod;
+  -webkit-box-shadow: 0px 15px 0px 0px rgb(136, 103, 20);
+  -moz-box-shadow: 0px 15px 0px 0px  rgb(136, 103, 20);
+  box-shadow: 0px 15px 0px 0px  rgb(136, 103, 20);
+} */
+
+.score {
+  text-align: center;
   position: absolute;
   top: 0%;
   height: 50px;
