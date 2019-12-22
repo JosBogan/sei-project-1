@@ -498,12 +498,12 @@ function init() {
 
   function startFunc() {
     if (!playing) {
-      theme.play()
       if (!paused) {
         resetFunc()
         blockPick()
         nextBlockPick()
       }
+      theme.play()
       startTimer()
       start.innerHTML = 'Pause'
       paused = false
