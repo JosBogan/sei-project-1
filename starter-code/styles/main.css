@@ -4,7 +4,7 @@
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
   font-size: 20px;
-  color: rgb(0, 0, 0);
+  color: black;
 }
 
 .page_container {
@@ -16,7 +16,72 @@
   background-image: url('https://www.publicdomainpictures.net/pictures/320000/velka/abstrakt-wasserfarbe-hintergrund-1575395840syM.jpg');
   background-size: cover;
   background-position: center;
+}
 
+.back {
+  display: none;
+  position: fixed;
+  top: 100px;
+  left: 300px;
+  border-radius: 50%;
+  color: #718096;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.back:hover {
+  color: #2D3748;
+}
+
+.selector_container {
+  width: 500px;
+  display: flex;
+  justify-content: space-between;
+  /* display: none; */
+}
+
+.tetris_selector {
+  background: #B794F4;
+  border: 1px solid #805AD5;
+}
+
+.tetris_selector:hover {
+  /* background: rgb(163, 131, 218); */
+}
+
+.second_selector {
+  background: #68D391;
+  border: 1px solid rgb(59, 121, 83);
+}
+
+.second_selector:hover {
+  /* background: rgb(90, 182, 125); */
+}
+
+.selector {
+  height: 300px;
+  width: 200px;
+  border-radius: 20px;
+  cursor: pointer;
+  -webkit-box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.25);
+  -moz-box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.25);
+  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.25);
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.selector:hover {
+  -webkit-box-shadow: -5px 5px 0px 0px rgba(0,0,0,0.25);
+  -moz-box-shadow: -5px 5px 0px 0px rgba(0,0,0,0.25);
+  box-shadow: -5px 5px 0px 0px rgba(0,0,0,0.25);
+}
+
+
+.tetris {
+  justify-content: center;
+  align-items: center;
+  /* display: flex; */
+  display: none;
 }
 
 .side_bar {
@@ -55,10 +120,18 @@
   /* border: 1px solid rgba(0, 0, 0, 0.1); */
 }
 
-/* .game_square:nth-child(n+2) {
-  border-left: 1px solid rgba(0, 0, 0, 0.1);;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);;;
-} */
+.game_container > .game_square {
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.game_container > .game_square:nth-child(10n + 2) {
+  border-left: 0px solid rgba(0, 0, 0, 0.1);
+}
+
+.game_container > .game_square:nth-child(n+232) {
+  border-bottom: 0px solid rgba(0, 0, 0, 0.1);
+}
 
 .next, .bank {
   display: flex;
@@ -70,56 +143,43 @@
 }
 
 h2 {
-  /* background: blue */
   padding: 5px 0;
 }
 
-.next_block_square {
-  /* border: 1px solid black; */
-}
-
-.active {
-  background: pink;
-  -webkit-box-shadow: 0px 15px 0px 0px  rgba(0, 0, 0, 0.274);
-  -moz-box-shadow: 0px 15px 0px 0px rgba(0, 0, 0, 0.274);
-  box-shadow: 0px 15px 0px 0px rgba(0, 0, 0, 0.274);
-  /* border: 0px solid black; */
-}
-
-/* .maroon {
-  background: maroon;
-  -webkit-box-shadow: 0px 15px 0px 0px rgb(63, 0, 0);
-  -moz-box-shadow: 0px 15px 0px 0px  rgb(63, 0, 0);
-  box-shadow: 0px 15px 0px 0px  rgb(63, 0, 0);
+.maroon {
+  background: #E53E3E;
+  -webkit-box-shadow: 0px 15px 0px 0px rgba(0, 0, 0, 0.25);
+  -moz-box-shadow: 0px 15px 0px 0px  rgba(0, 0, 0, 0.25);
+  box-shadow: 0px 15px 0px 0px  rgba(0, 0, 0, 0.25);
 }
 
 .magenta {
-  background: magenta;
-  -webkit-box-shadow: 0px 15px 0px 0px rgb(128, 0, 128);
-  -moz-box-shadow: 0px 15px 0px 0px  rgb(128, 0, 128);
-  box-shadow: 0px 15px 0px 0px  rgb(128, 0, 128);
+  background: #D69E2E;
+  -webkit-box-shadow: 0px 15px 0px 0px rgba(0, 0, 0, 0.25);
+  -moz-box-shadow: 0px 15px 0px 0px  rgba(0, 0, 0, 0.25);
+  box-shadow: 0px 15px 0px 0px  rgba(0, 0, 0, 0.25);
 }
 
 .cyan {
-  background: cyan;
-  -webkit-box-shadow: 0px 15px 0px 0px rgb(0, 128, 128);
-  -moz-box-shadow: 0px 15px 0px 0px  rgb(0, 128, 128);
-  box-shadow: 0px 15px 0px 0px  rgb(0, 128, 128);
+  background: #319795;
+  -webkit-box-shadow: 0px 15px 0px 0px rgba(0, 0, 0, 0.25);
+  -moz-box-shadow: 0px 15px 0px 0px  rgba(0, 0, 0, 0.25);
+  box-shadow: 0px 15px 0px 0px  rgba(0, 0, 0, 0.25);
 }
 
 .green {
-  background: mediumseagreen;
-  -webkit-box-shadow: 0px 15px 0px 0px rgb(36, 109, 69);
-  -moz-box-shadow: 0px 15px 0px 0px  rgb(36, 109, 69);
-  box-shadow: 0px 15px 0px 0px  rgb(36, 109, 69);
+  background: #38A169;
+  -webkit-box-shadow: 0px 15px 0px 0px rgba(0, 0, 0, 0.25);
+  -moz-box-shadow: 0px 15px 0px 0px  rgba(0, 0, 0, 0.25);
+  box-shadow: 0px 15px 0px 0px  rgba(0, 0, 0, 0.25);
 }
 
 .gold {
-  background: goldenrod;
-  -webkit-box-shadow: 0px 15px 0px 0px rgb(136, 103, 20);
-  -moz-box-shadow: 0px 15px 0px 0px  rgb(136, 103, 20);
-  box-shadow: 0px 15px 0px 0px  rgb(136, 103, 20);
-} */
+  background: #6B46C1;
+  -webkit-box-shadow: 0px 15px 0px 0px rgba(0, 0, 0, 0.25);
+  -moz-box-shadow: 0px 15px 0px 0px  rgba(0, 0, 0, 0.25);
+  box-shadow: 0px 15px 0px 0px  rgba(0, 0, 0, 0.25);
+}
 
 .score {
   font-size: 40px;

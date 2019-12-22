@@ -6,11 +6,15 @@ function init() {
   const start = document.querySelector('.start')
   const domScore = document.querySelector('.score')
   // const sideBar = document.querySelector('.side_bar')
-  const next = document.querySelector('.next')
+  const nextGrid = document.querySelector('.next')
   const domBank = document.querySelector('.bank')
   const domPause = document.querySelector('.paused')
   const theme = document.querySelector('#theme')
   const pop = document.querySelector('#pop')
+  const tetris = document.querySelector('.tetris')
+  const tetrisPlay = document.querySelector('.tetris_selector')
+  const selectorContainer = document.querySelector('.selector_container')
+  const back = document.querySelector('.back')
 
   // Variables 
 
@@ -23,24 +27,41 @@ function init() {
   let playing = false
   let paused = false
   let x
-  let currentBlockInit
-  let currentBlock
-  let currentInitId
-  let currentRotId
-  let nextBlockInit
-  let nextBlock
-  let nextInitId
-  let nextRotId
+
+  class Block {
+    constructor() {
+      this.initId = initGen()
+      this.rotId = rotGen()
+      this.init = tetriminos[this.initId][this.rotId]
+      this.colour = colourGen()
+      this.blocks = this.init()
+    }
+  }
+
+  let current
+  let next
+  let bank
+  let passing
+
   let timerId = null
   let active = []
   let score = 0
   let speed = 500
   let levelUpScore = 250
-  let bankedInit 
-  let bankedInitId
-  let bankedRotId
+
   let banked = false
-  let bankBlock
+
+  let colourRotator = 4
+  const colour1 = 'maroon'
+  let colour1Array = []
+  const colour2 = 'magenta'
+  let colour2Array = []
+  const colour3 = 'cyan'
+  let colour3Array = []
+  const colour4 = 'green'
+  let colour4Array = []
+  const colour5 = 'gold'
+  let colour5Array = []
 
   const tetriminos = [
     [
@@ -143,69 +164,7 @@ function init() {
     ]
   ]
 
-  // Functions
-
-  function randomBlockGen() {
-    return Math.floor(Math.random() * (tetriminos.length))
-  }
-
-  function randomRotationGen() {
-    return Math.floor(Math.random() * 4)
-  }
-
-  function rotateBlock() {
-    if (currentRotId === tetriminos[currentInitId].length - 1) {
-      currentRotId = 0
-    } else {
-      currentRotId++
-    }
-    currentBlockInit = tetriminos[currentInitId][currentRotId]
-    currentBlock = currentBlockInit()
-    if ((rightWallRotChecker() || leftWallRotChecker()) && (leftBlockRotChecker() || rightBlockRotChecker()) && !baseChecker()) {
-      removeAndRepaint()
-    } else {
-      if (currentRotId === 0) {
-        currentRotId = tetriminos[currentInitId].length - 1
-      } else {
-        currentRotId--
-      }
-      currentBlockInit = tetriminos[currentInitId][currentRotId]
-      currentBlock = currentBlockInit()
-    }
-    removeAndRepaint()
-  }
-
-  function blockPick() {
-    currentInitId = randomBlockGen()
-    currentRotId = randomRotationGen()
-    currentBlockInit = tetriminos[currentInitId][currentRotId]
-    currentBlock = currentBlockInit()
-    
-  }
-
-
-  function nextBlockPick() {
-    if (nextBlock) {
-      currentBlockInit = nextBlockInit
-      currentInitId = nextInitId
-      currentRotId = nextRotId
-    }
-    nextInitId = randomBlockGen()
-    nextRotId = randomRotationGen()
-    nextBlockInit = tetriminos[nextInitId][nextRotId]
-    width = 4
-    x = 6
-    nextBlock = nextBlockInit()
-    nextBlockPaint()
-    
-  }
-
-  function nextBlockPaint() {
-    nextSquares.forEach(square => square.classList.remove('active'))
-    nextBlock.forEach(index => nextSquares[index].classList.add('active'))
-    width = 10
-    resetX()
-  }
+  // Generate Board Functions
 
   function gridCreate() {
     for (let i = 0; i < height; i++) {
@@ -228,8 +187,7 @@ function init() {
       for (let i = 0; i < width - sideBarDiff; i++) {
         const square = document.createElement('div')
         square.classList.add('game_square')
-        // square.classList.add('next_block_square')
-        next.appendChild(square)
+        nextGrid.appendChild(square)
         nextSquares.push(square)
       }
     }
@@ -240,19 +198,114 @@ function init() {
       for (let i = 0; i < width - sideBarDiff; i++) {
         const square = document.createElement('div')
         square.classList.add('game_square')
-        // square.classList.add('bank')
         domBank.appendChild(square)
         bankSquares.push(square)
       }
     }
   }
-  
+
+  // Block property Functions
+
+  function initGen() {
+    return Math.floor(Math.random() * (tetriminos.length))
+  }
+
+  function rotGen() {
+    return Math.floor(Math.random() * 4)
+  }
+
+  function colourGen() {
+    colourRotator++
+    if (colourRotator === 5) {
+      colourRotator = 0
+    }
+    switch (colourRotator) {
+      case 0:
+        return colour1
+      case 1:
+        return colour2
+      case 2:
+        return colour3
+      case 3:
+        return colour4
+      case 4:
+        return colour5
+    }
+    console.log(colourRotator)
+  }
+
+
+  function colourArraySwitch() {
+    switch (current.colour) {
+      case colour1:
+        colour1Array = colour1Array.concat(current.blocks)
+        break
+      case colour2:
+        colour2Array = colour2Array.concat(current.blocks)
+        break
+      case colour3:
+        colour3Array = colour3Array.concat(current.blocks)
+        break
+      case colour4:
+        colour4Array = colour4Array.concat(current.blocks)
+        break
+      case colour5:
+        colour5Array = colour5Array.concat(current.blocks)
+        break
+    }
+  }
+
+  function rotateBlock() {
+    if (current.rotId === tetriminos[current.initId].length - 1) { 
+      current.rotId = 0
+    } else {
+      current.rotId++
+    }
+    current.init = tetriminos[current.initId][current.rotId]
+    current.blocks = current.init()
+    if ((rightWallRotChecker() || leftWallRotChecker()) && (leftBlockRotChecker() || rightBlockRotChecker()) && !baseChecker()) {
+      removeAndRepaint()
+    } else {
+      if (current.rotId === 0) {
+        current.rotId = tetriminos[current.initId].length - 1
+      } else {
+        current.rotId--
+      }
+      current.init = tetriminos[current.initId][current.rotId]
+      current.blocks = current.init()
+    }
+    removeAndRepaint()
+  }
+
+  function blockPick() {
+    current = new Block()
+  }
+
+  function nextBlockPick() {
+    if (next) {
+      current = next
+    }
+    width = 4
+    x = 6
+    next = new Block
+    nextBlockPaint()
+    width = 10
+  }
+
+  function nextBlockPaint() {
+    nextSquares.forEach(square => square.className = 'game_square')
+    next.blocks.forEach(index => nextSquares[index].classList.add(next.colour))
+    resetX()
+  }
 
   function removeAndRepaint() {
-    squares.forEach(square => square.classList.remove('active'))
-    currentBlock.forEach(index => squares[index].classList.add('active'))
-    active.forEach(index => squares[index].classList.add('active'))
-
+    squares.forEach(square => square.classList.remove(colour1, colour2, colour3, colour4, colour5))
+    current.blocks.forEach(index => squares[index].classList.add(current.colour))
+    colour1Array.forEach(index => squares[index].classList.add(colour1))
+    colour2Array.forEach(index => squares[index].classList.add(colour2))
+    colour3Array.forEach(index => squares[index].classList.add(colour3))
+    colour4Array.forEach(index => squares[index].classList.add(colour4))
+    colour5Array.forEach(index => squares[index].classList.add(colour5))
   }
 
   function resetX() {
@@ -262,11 +315,53 @@ function init() {
   function baseCollision() {
     if ((baseChecker() || blockChecker()) && playing) {
       pop.play()
-      active = active.concat(currentBlock)
+      active = active.concat(current.blocks)
+      colourArraySwitch()
       gameOverFunc()
       resetX()
       scoreFunc()
       nextBlockPick()
+    }
+  }
+
+  function spliceFromEachColour(z) {
+    if (colour1Array.includes(z)) {
+      const index = colour1Array.indexOf(z)
+      colour1Array.splice(index, 1)
+    }
+    if (colour2Array.includes(z)) {
+      const index = colour2Array.indexOf(z)
+      colour2Array.splice(index, 1)
+    }
+    if (colour3Array.includes(z)) {
+      const index = colour3Array.indexOf(z)
+      colour3Array.splice(index, 1)
+    }
+    if (colour4Array.includes(z)) {
+      const index = colour4Array.indexOf(z)
+      colour4Array.splice(index, 1)
+    }
+    if (colour5Array.includes(z)) {
+      const index = colour5Array.indexOf(z)
+      colour5Array.splice(index, 1)
+    }
+  }
+
+  function moveDownEachColour(inc, z) {
+    if (colour1Array[inc] < z) {
+      colour1Array[inc] += width
+    }
+    if (colour2Array[inc] < z) {
+      colour2Array[inc] += width
+    }
+    if (colour3Array[inc] < z) {
+      colour3Array[inc] += width
+    }
+    if (colour4Array[inc] < z) {
+      colour4Array[inc] += width
+    }
+    if (colour5Array[inc] < z) {
+      colour5Array[inc] += width
     }
   }
 
@@ -277,16 +372,17 @@ function init() {
       const rowComplete = active.filter(item => item >= i && item < (i + width))
       if (rowComplete.length === width) {
         n++
-        for (let i = 0; i < rowComplete.length; i++) {
-          const index = active.indexOf(rowComplete[i])
+        for (let q = 0; q < rowComplete.length; q++) {
+          const index = active.indexOf(rowComplete[q])
           active.splice(index, 1)
+          spliceFromEachColour(rowComplete[q])
         }
-        for (let i = 0; i < active.length; i++) {
-          if (active[i] < rowComplete[0]) {
-            active[i] += width
+        for (let q = 0; q < active.length; q++) {
+          if (active[q] < rowComplete[0]) {
+            active[q] += width
+            moveDownEachColour(q, rowComplete[0])
           }
         }
-        // score += 10
       }
     }
     score += (10 * (n * n))
@@ -297,7 +393,7 @@ function init() {
   function gravityTimer() {
     baseCollision()
     x += width
-    currentBlock = currentBlockInit()
+    current.blocks = current.init()
     removeAndRepaint()
   }
 
@@ -315,89 +411,82 @@ function init() {
     width = 4
     const bankedX = x
     x = 6
-    let passing
-    let passingInitId
-    let passingRotId
     if (!banked) {
-      bankedInit = currentBlockInit
-      bankedRotId = currentRotId
-      bankedInitId = currentInitId
-      bankBlock = currentBlockInit()
-      bankBlock.forEach(index => bankSquares[index].classList.add('active'))
+      bank = current
+      bank.blocks = bank.init()
+      bank.blocks.forEach(index => bankSquares[index].classList.add(bank.colour))
       resetX()
       nextBlockPick()
-      banked = !banked
+      banked = true
     } else {
       width = 10 
       x = bankedX
-      currentBlock = bankedInit()
+      current.blocks = bank.init()
       if ((rightWallRotChecker() || leftWallRotChecker()) && (leftBlockRotChecker() || rightBlockRotChecker()) && !baseChecker()) {
         x = 6
         width = 4
-        passing = currentBlockInit
-        passingInitId = currentInitId
-        passingRotId = currentRotId
-        currentBlockInit = bankedInit
-        currentInitId = bankedInitId
-        currentRotId = bankedRotId
-        bankedInit = passing
-        bankedInitId = passingInitId
-        bankedRotId = passingRotId
-        bankBlock.forEach(index => bankSquares[index].classList.remove('active'))
-        bankBlock = bankedInit()
-        bankBlock.forEach(index => bankSquares[index].classList.add('active'))
+        passing = current
+        current = bank
+        bank = passing
+        bank.blocks = bank.init()
+        bankSquares.forEach(index => index.classList.remove(colour1, colour2, colour3, colour4, colour5))
+        bank.blocks.forEach(index => bankSquares[index].classList.add(bank.colour))
         x = bankedX
       }
     }
     width = 10
-    currentBlock = currentBlockInit()
+    current.blocks = current.init()
     removeAndRepaint()
   }
+
+  // Collision detection Functions
   
 
   function rightWallChecker() {
-    return !currentBlock.some(index => index % width === width - 1)
+    return !current.blocks.some(index => index % width === width - 1)
   }
 
   function leftWallChecker() {
-    return !currentBlock.some(index => index % width === 0)
+    return !current.blocks.some(index => index % width === 0)
   }
 
   function rightWallRotChecker() {
-    return !currentBlock.some(index => index % width === 0)
+    return !current.blocks.some(index => index % width === 0)
   }
 
   function leftWallRotChecker() {
-    return !currentBlock.some(index => index % width === width - 1)
+    return !current.blocks.some(index => index % width === width - 1)
   }
 
   function baseChecker() {
-    return currentBlock.some(index => index + width >= height * width)
+    return current.blocks.some(index => index + width >= height * width)
   }
 
   function blockChecker() {
-    return currentBlock.some(index => active.includes(index + width))
+    return current.blocks.some(index => active.includes(index + width))
   }
 
   function rightBlockChecker() {
-    return !currentBlock.some(index => active.includes(index + 1))
+    return !current.blocks.some(index => active.includes(index + 1))
   }
 
   function leftBlockChecker() {
-    return !currentBlock.some(index => active.includes(index - 1))
+    return !current.blocks.some(index => active.includes(index - 1))
   }
 
   function leftBlockRotChecker() {
-    return !currentBlock.some(index => active.includes(index))
+    return !current.blocks.some(index => active.includes(index))
   }
 
   function rightBlockRotChecker() {
-    return !currentBlock.some(index => active.includes(index))
+    return !current.blocks.some(index => active.includes(index))
   }
 
   function startTimer() {
     timerId = setInterval(gravityTimer, speed)
   }
+  
+  // Button Functions
 
   function pause() {
     if (paused) {
@@ -410,9 +499,7 @@ function init() {
   function startFunc() {
     if (!playing) {
       theme.play()
-      playing = true
       if (!paused) {
-        resetX()
         resetFunc()
         blockPick()
         nextBlockPick()
@@ -420,6 +507,7 @@ function init() {
       startTimer()
       start.innerHTML = 'Pause'
       paused = false
+      playing = true
       pause()
     } else {
       theme.pause()
@@ -431,14 +519,38 @@ function init() {
     }
   }
 
+  function resetFunc() {
+    playing = false
+    clearInterval(timerId)
+    start.innerHTML = 'Play'
+    theme.pause()
+    theme.currentTime = 0
+    active = []
+    colour1Array = []
+    colour2Array = []
+    colour3Array = []
+    colour4Array = []
+    colour5Array = []
+    squares.forEach(square => square.classList.remove(colour1, colour2, colour3, colour4, colour5))
+    bankSquares.forEach(index => index.classList.remove(colour1, colour2, colour3, colour4, colour5))
+    nextSquares.forEach(index => index.classList.remove(colour1, colour2, colour3, colour4, colour5))
+    score = 0
+    domScore.innerHTML = score
+    resetX()
+  }
+
+  function stopGame() {
+    clearInterval(timerId)
+    tryAgainPopUp()
+    playing = false
+    start.innerHTML = 'Play'
+    theme.pause()
+    theme.currentTime = 0
+  }
+
   function gameOverFunc(){
     if (active.some(item => item < width * 5)) {
-      clearInterval(timerId)
-      tryAgainPopUp()
-      playing = !playing
-      start.innerHTML = 'Play'
-      theme.pause()
-      theme.currentTime = 0
+      stopGame()
     }
   }
 
@@ -447,27 +559,15 @@ function init() {
     domPause.innerHTML = 'Bad Luck, Try Again!'
   }
 
-  function resetFunc() {
-    domPause.innerHTML = 'Paused'
-    start.innerHTML = 'Play'
-    active = []
-    squares.forEach(square => square.classList.remove('active'))
-    score = 0
-    domScore.innerHTML = score
-  }
-  
-
-  // Event Handlers
-
   function keyDownEvents(e) {
     if (playing) {
       if (e.key === 'ArrowRight' && rightWallChecker() && rightBlockChecker()) {
         x++
-        currentBlock = currentBlockInit()
+        current.blocks = current.init()
         removeAndRepaint()
       } else if (e.key === 'ArrowLeft' && leftWallChecker() && leftBlockChecker()) {
         x--
-        currentBlock = currentBlockInit()
+        current.blocks = current.init()
         removeAndRepaint()
       } else if (e.key === 'ArrowDown') {
         clearInterval(timerId)
@@ -490,14 +590,31 @@ function init() {
     }
   }
 
+  function displayTetris() {
+    selectorContainer.style.display = 'none'
+    tetris.style.display = 'flex'
+    back.style.display = 'block'
+  }
+
+  function returnToMain() {
+    resetFunc()
+    domPause.style.display = 'none'
+    selectorContainer.style.display = 'flex'
+    tetris.style.display = 'none'
+    back.style.display = 'none'
+  }
+
   nextGridCreate()
   gridCreate()
   bankGridCreate()
 
+  // Event Handlers
+  
+  back.addEventListener('click', returnToMain)
+  tetrisPlay.addEventListener('click', displayTetris)
   window.addEventListener('keyup', keyUpEvents)
   window.addEventListener('keydown', keyDownEvents)
   start.addEventListener('click', startFunc)
 }
-
 
 window.addEventListener('DOMContentLoaded', init)
