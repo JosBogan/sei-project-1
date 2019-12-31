@@ -21,8 +21,8 @@
 .back {
   display: none;
   position: fixed;
-  top: 100px;
-  left: 300px;
+  top: 80px;
+  left: 325px;
   border-radius: 50%;
   color: #718096;
   transition: all 0.2s;
@@ -37,8 +37,9 @@
   width: 500px;
   display: flex;
   justify-content: space-between;
-  display: none;
+  /* display: none; */
 }
+
 
 .tetris_selector {
   background: #B794F4;
@@ -46,7 +47,7 @@
 }
 
 
-.second_selector {
+.fl_tron_selector {
   background: #68D391;
   border: 1px solid rgb(59, 121, 83);
 }
@@ -218,8 +219,8 @@ h2 {
 .fl_tron {
     justify-content: center;
     align-items: center;
-    display: flex;
-    /* display: none; */
+    /* display: flex; */
+    display: none;
 }
 
 .fl_tron_container {
@@ -281,6 +282,12 @@ h2 {
   transition: all 0.2s;
   margin-bottom: 30px;
 }
+
+
+.fl_start:hover {
+  background: #02FFE6;
+}
+
 
 .player {
   visibility: hidden;

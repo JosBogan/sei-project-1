@@ -604,14 +604,6 @@ function init() {
     back.style.display = 'block'
   }
 
-  function returnToMain() {
-    resetFunc()
-    tetrisDomPause.style.display = 'none'
-    selectorContainer.style.display = 'flex'
-    tetris.style.display = 'none'
-    back.style.display = 'none'
-  }
-
   nextGridCreate()
   gridCreate()
   bankGridCreate()
@@ -630,6 +622,7 @@ function init() {
   // FL Tron DOM Variables
 
   const flGameContainer = document.querySelector('.fl_tron_container')
+  const flTron = document.querySelector('.fl_tron')
   const flStart = document.querySelector('.fl_start')
   const numPlayers = document.querySelector('#num_players')
   const numPlayersSpan = document.querySelector('label > span')
@@ -645,6 +638,7 @@ function init() {
   const flRoundDom = document.querySelector('#fl_round')
   const flRoundMatch = document.querySelector('#fl_round_match')
   const colourInputs = document.querySelectorAll('.colour_input')
+  const flTronPlay = document.querySelector('.fl_tron_selector')
 
   // Variables
 
@@ -658,8 +652,6 @@ function init() {
   const fl3PStart3 = (((flHeight * flWidth) / 4) * 3) + (flWidth / 2)
   const fl4PStart3 = fl2PStart + ((flHeight * flWidth) / 4)
   const fl4PStart4 = fl2PStart2 + ((flHeight * flWidth) / 4)
-  let arrayOfFlPlayers = []
-  let flRound = 1
 
   let flP1 = null
   let flP2 = null
@@ -669,6 +661,15 @@ function init() {
   let flP2Score = 0
   let flP3Score = 0
   let flP4Score = 0
+  let flP1colour = '#000000'
+  let flP2colour = '#000000'
+  let flP3colour = '#000000'
+  let flP4colour = '#000000'
+
+  let arrayOfFlPlayers = []
+  let arrayOfAllFlPlayers = []
+  let flRound = 1
+
   
 
 
@@ -708,14 +709,12 @@ function init() {
         (((this.x + 1 ) % flWidth === 0) && (this.active[this.active.length - 1] % flWidth === 0))
       ) {
         this.flPlayerEnd()
-        flEndGame()
       }
     }
     playerCollision() {
-      arrayOfFlPlayers.forEach(player => {
+      arrayOfAllFlPlayers.forEach(player => {
         if (player.active.includes(this.x)) {
           this.flPlayerEnd()
-          flEndGame()
         }
       })
     }
@@ -737,23 +736,42 @@ function init() {
     arrayOfFlPlayers.forEach(player => {
       switch (player) {
         case flP1:
-          player.active.forEach(index => flSquares[index].style.background = player.colour)
+          player.active.forEach(index => flSquares[index].style.background = flP1colour)
           break
         case flP2:
-          player.active.forEach(index => flSquares[index].style.background = player.colour)
+          player.active.forEach(index => flSquares[index].style.background = flP2colour)
           break
         case flP3:
-          player.active.forEach(index => flSquares[index].style.background = player.colour)
+          player.active.forEach(index => flSquares[index].style.background = flP3colour)
           break
         case flP4:
-          player.active.forEach(index => flSquares[index].style.background = player.colour)
+          player.active.forEach(index => flSquares[index].style.background = flP4colour)
+          break
+      }
+    })
+  }
+
+  function flResetPaint() {
+    arrayOfAllFlPlayers.forEach(player => {
+      switch (player) {
+        case flP1:
+          player.active.forEach(index => flSquares[index].style.background = flP1colour)
+          break
+        case flP2:
+          player.active.forEach(index => flSquares[index].style.background = flP2colour)
+          break
+        case flP3:
+          player.active.forEach(index => flSquares[index].style.background = flP3colour)
+          break
+        case flP4:
+          player.active.forEach(index => flSquares[index].style.background = flP4colour)
           break
       }
     })
   }
 
   function clearFlPaint() {
-    flSquares.forEach(index => index.classList.remove('fl_P1'))
+    flSquares.forEach(index => index.style.background = '')
   }
 
   function flPlayerCountCheck() {
@@ -870,10 +888,6 @@ function init() {
     }
   }
 
-  function flEndGame() {
-    console.log('Game Over')
-  }
-
   function tick() {
     flPaint()
     arrayOfFlPlayers.forEach(flplayer => {
@@ -931,19 +945,33 @@ function init() {
     flP4Score = 0
     flRound = 1
     flRoundMatch.innerHTML = 'Round'
+    
   }
 
   function flResetMatch() {
     flWinMessage.style.display = 'none'
     clearFlPaint()
-    setplayerStarting(parseInt(numPlayers.value))
-    flPaint()
+    resetPlayers()
+    flResetPaint()
     flRound++
+    arrayOfFlPlayers = []
+    arrayOfAllFlPlayers.forEach(player => arrayOfFlPlayers.push(player))
     winCondition()
+  }
+
+  function resetPlayers() {
+    arrayOfAllFlPlayers.forEach(player => {
+      player.x = player.active[0]
+      player.active = [player.x]
+    })
   }
 
   function flStartFunc() {
     if (flPlaying) return
+    if (flRound === 1) {
+      arrayOfAllFlPlayers = []
+      arrayOfFlPlayers.forEach(player => arrayOfAllFlPlayers.push(player))
+    }
     flPlaying = true
     timerId = setInterval(tick, flSpeed)
     numPlayers.disabled = true
@@ -1012,18 +1040,23 @@ function init() {
   }
 
   function colourChange() {
+    const flColour = event.target.value
     switch (event.target.getAttribute('data-id')) {
       case '1':
-        flP1.colour = event.target.value
+        flP1.colour = flColour
+        flP1colour = flColour
         break
       case '2':
-        flP2.colour = event.target.value
+        flP2.colour = flColour
+        flP2colour = flColour
         break
       case '3':
-        flP3.colour = event.target.value
+        flP3.colour = flColour
+        flP3colour = flColour
         break
       case '4':
-        flP4.colour = event.target.value
+        flP4.colour = flColour
+        flP4colour = flColour
         break
     }
     flPaint()
@@ -1063,6 +1096,13 @@ function init() {
     flPaint()
   }
 
+  function displayFlTron() {
+    selectorContainer.style.display = 'none'
+    flTron.style.display = 'flex'
+    back.style.display = 'block'
+    
+  }
+
   createPlayer1(1)
   createPlayer2(1)
 
@@ -1079,9 +1119,19 @@ function init() {
   numPlayers.addEventListener('change', changeNumPlayers)
   flReset.addEventListener('click', flResetMatch)
   colourInputs.forEach(colourInput => colourInput.addEventListener('change', colourChange))
+  flTronPlay.addEventListener('click', displayFlTron)
   
 
   // FL TRON END
+
+  function returnToMain() {
+    resetFunc()
+    tetrisDomPause.style.display = 'none'
+    selectorContainer.style.display = 'flex'
+    tetris.style.display = 'none'
+    flTron.style.display = 'none'
+    back.style.display = 'none'
+  }
   
   back.addEventListener('click', returnToMain)
   
