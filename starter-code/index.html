@@ -30,8 +30,72 @@
           <h2 class="side_head">Score</h2>
           <div class="score">0</div>
         </div>
-        <div class="game_container">
+        <div class="tetris_game_container">
           <div class="paused">Paused</div>
+        </div>
+      </div>
+      <div class="fl_tron">
+        <div class="fl_side_bar">
+          <button class="fl_start">Play</button>
+          <div class="players">
+            <form>
+              <label for="num_players">Number of Players: <span>2</span></label>
+              <input type="range" min="2", max="4" value="2" id="num_players">
+            </form>
+            <div class="player player1">
+              <h2>Player1</h2>
+              <div class="fl_points">
+                <input class="colour_input" data-id="1" type="color">
+                <div class="fl_point fl_P1_point"></div>
+                <div class="fl_point fl_P1_point"></div>
+                <div class="fl_point fl_P1_point"></div>
+              </div>
+              <form>
+                <!-- <input type="checkbox"> -->
+              </form>
+            </div>
+            <div class="player player2">
+              <h2>Player2</h2>
+              <div class="fl_points">
+                <input class="colour_input" data-id="2" type="color">
+                <div class="fl_point fl_P2_point"></div>
+                <div class="fl_point fl_P2_point"></div>
+                <div class="fl_point fl_P2_point"></div>
+              </div>
+              <form>
+                <!-- <input type="checkbox"> -->
+              </form>
+            </div>
+            <div class="player player3">
+              <h2>Player3</h2>
+              <div class="fl_points">
+                <input class="colour_input" data-id="3" type="color">
+                <div class="fl_point fl_P3_point"></div>
+                <div class="fl_point fl_P3_point"></div>
+                <div class="fl_point fl_P3_point"></div>
+              </div>
+              <form>
+                <!-- <input type="checkbox"> -->
+              </form>
+            </div>
+            <div class="player player4">
+              <h2>Player4</h2>
+              <div class="fl_points">
+                <input class="colour_input" data-id="4" type="color">
+                <div class="fl_point fl_P4_point"></div>
+                <div class="fl_point fl_P4_point"></div>
+                <div class="fl_point fl_P4_point"></div>
+              </div class="fl_points">
+              <form>
+                <!-- <input type="checkbox"> -->
+              </form>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="fl_tron_container">
+            <div class="fl_message"><span id="fl_round_match">Round</span> <span id="fl_round"></span><br /><span id='fl_player_name'></span> win<br /><span class="fl_reset">Reset Board</span></div>
+          </div>
         </div>
       </div>
     </div>

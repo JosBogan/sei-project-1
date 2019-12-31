@@ -37,7 +37,7 @@
   width: 500px;
   display: flex;
   justify-content: space-between;
-  /* display: none; */
+  display: none;
 }
 
 .tetris_selector {
@@ -45,17 +45,10 @@
   border: 1px solid #805AD5;
 }
 
-.tetris_selector:hover {
-  /* background: rgb(163, 131, 218); */
-}
 
 .second_selector {
   background: #68D391;
   border: 1px solid rgb(59, 121, 83);
-}
-
-.second_selector:hover {
-  /* background: rgb(90, 182, 125); */
 }
 
 .selector {
@@ -83,7 +76,7 @@
 .tetris {
   justify-content: center;
   align-items: center;
-  /* display: flex; */
+  display: flex;
   display: none;
 }
 
@@ -102,7 +95,7 @@
   border: 1px solid rgb(129, 106, 148);
 }
 
-.game_container {
+.tetris_game_container {
   position: relative;
   min-width: 301px;
   max-width: 301px;
@@ -123,16 +116,16 @@
   /* border: 1px solid rgba(0, 0, 0, 0.1); */
 }
 
-.game_container > .game_square {
+.tetris_game_container > .game_square {
   border-left: 1px solid rgba(0, 0, 0, 0.1);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.game_container > .game_square:nth-child(10n + 2) {
+.tetris_game_container > .game_square:nth-child(10n + 2) {
   border-left: 0px solid rgba(0, 0, 0, 0.1);
 }
 
-.game_container > .game_square:nth-child(n+232) {
+.tetris_game_container > .game_square:nth-child(n+232) {
   border-bottom: 0px solid rgba(0, 0, 0, 0.1);
 }
 
@@ -208,7 +201,6 @@ h2 {
 
 .paused {
   text-align: center;
-  display: none;
   position: absolute;
   left: 50%;
   top: 50%;
@@ -218,4 +210,117 @@ h2 {
   padding: 10px 20px;
   display: none;
   border-radius: 5px;
+}
+
+/* FL TRON  */
+
+
+.fl_tron {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    /* display: none; */
+}
+
+.fl_tron_container {
+  position: relative;
+  min-width: 625px;
+  max-width: 625px;
+  display: flex;
+  flex-wrap: wrap;
+  background: #CCA8E9;
+  overflow: hidden;
+  border-top: 1px solid rgb(129, 106, 148);
+  border-right: 1px solid rgb(129, 106, 148);
+  border-bottom: 1px solid rgb(129, 106, 148);
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.fl_side_bar {
+  text-align: center;
+  padding: 20px 28px;
+  min-width: 180px;
+  max-width: 180px;
+  height: 482px;
+  background: #cadefc;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border: 1px solid rgb(129, 106, 148);
+}
+
+.fl_game_square {
+  height: 6px;
+  width: 6px;
+}
+
+.fl_P1 {
+  background: rgb(0, 0, 0);
+}
+
+.fl_P2 {
+  background: rgb(0, 0, 0);
+}
+
+.fl_P3 {
+  background: rgb(0, 0, 0);
+}
+
+.fl_P4 {
+  background: rgb(0, 0, 0);
+}
+
+.fl_start {
+  border: 1px solid #8cb0e6;
+  background: rgb(184, 255, 248);
+  cursor: pointer;
+  padding: 20px 0;
+  transition: all 0.2s;
+  margin-bottom: 30px;
+}
+
+.player {
+  visibility: hidden;
+}
+
+.player1, .player2 {
+  visibility: visible;
+}
+
+.fl_points {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.fl_point {
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  border: 1px solid rgb(129, 106, 148);
+}
+
+.fl_point_fill {
+  background: rgb(191, 157, 219);;
+}
+
+.fl_message {
+  text-align: center;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid #8cb0e6;
+  background: #DEFCF9;
+  padding: 10px 20px;
+  display: none;
+  border-radius: 5px;
+}
+
+.fl_reset {
+  color:  rgb(30, 212, 197);
+  cursor: pointer;
 }

@@ -2,21 +2,29 @@ function init() {
 
   // DOM Variables
 
-  const gameContainer = document.querySelector('.game_container')
-  const start = document.querySelector('.start')
-  const domScore = document.querySelector('.score')
-  // const sideBar = document.querySelector('.side_bar')
-  const nextGrid = document.querySelector('.next')
-  const domBank = document.querySelector('.bank')
-  const domPause = document.querySelector('.paused')
-  const theme = document.querySelector('#theme')
-  const pop = document.querySelector('#pop')
-  const tetris = document.querySelector('.tetris')
-  const tetrisPlay = document.querySelector('.tetris_selector')
   const selectorContainer = document.querySelector('.selector_container')
   const back = document.querySelector('.back')
 
-  // Variables 
+  // Variables
+
+  let timerId = null
+
+  // Tetris DOM Variables
+
+  const tetrisGameContainer = document.querySelector('.tetris_game_container')
+  const tetrisStart = document.querySelector('.start')
+  const tetrisDomScore = document.querySelector('.score')
+  const tetrisNextGrid = document.querySelector('.next')
+  const tetrisDomBank = document.querySelector('.bank')
+  const tetrisDomPause = document.querySelector('.paused')
+  const tetrisTheme = document.querySelector('#theme')
+  const tetrisPop = document.querySelector('#pop')
+  const tetris = document.querySelector('.tetris')
+  const tetrisPlay = document.querySelector('.tetris_selector')
+
+  // TETRIS
+
+  // Tetris Variables 
 
   const height = 24
   let width = 10
@@ -43,7 +51,6 @@ function init() {
   let bank
   let passing
 
-  let timerId = null
   let active = []
   let score = 0
   let speed = 500
@@ -171,7 +178,7 @@ function init() {
       for (let i = 0; i < width; i++) {
         const square = document.createElement('div')
         square.classList.add('game_square')
-        gameContainer.appendChild(square)
+        tetrisGameContainer.appendChild(square)
         squares.push(square)
       }
     }
@@ -187,7 +194,7 @@ function init() {
       for (let i = 0; i < width - sideBarDiff; i++) {
         const square = document.createElement('div')
         square.classList.add('game_square')
-        nextGrid.appendChild(square)
+        tetrisNextGrid.appendChild(square)
         nextSquares.push(square)
       }
     }
@@ -198,7 +205,7 @@ function init() {
       for (let i = 0; i < width - sideBarDiff; i++) {
         const square = document.createElement('div')
         square.classList.add('game_square')
-        domBank.appendChild(square)
+        tetrisDomBank.appendChild(square)
         bankSquares.push(square)
       }
     }
@@ -314,7 +321,7 @@ function init() {
 
   function baseCollision() {
     if ((baseChecker() || blockChecker()) && playing) {
-      pop.play()
+      tetrisPop.play()
       active = active.concat(current.blocks)
       colourArraySwitch()
       gameOverFunc()
@@ -386,7 +393,7 @@ function init() {
       }
     }
     score += (10 * (n * n))
-    domScore.innerHTML = score
+    tetrisDomScore.innerHTML = score
     speedUp()
   }
 
@@ -490,9 +497,9 @@ function init() {
 
   function pause() {
     if (paused) {
-      domPause.style.display = 'block'
+      tetrisDomPause.style.display = 'block'
     } else {
-      domPause.style.display = 'none'
+      tetrisDomPause.style.display = 'none'
     }
   }
 
@@ -503,17 +510,17 @@ function init() {
         blockPick()
         nextBlockPick()
       }
-      theme.play()
+      tetrisTheme.play()
       startTimer()
-      start.innerHTML = 'Pause'
+      tetrisStart.innerHTML = 'Pause'
       paused = false
       playing = true
       pause()
     } else {
-      theme.pause()
+      tetrisTheme.pause()
       playing = false
       clearInterval(timerId)
-      start.innerHTML = 'Play'
+      tetrisStart.innerHTML = 'Play'
       paused = true
       pause()
     }
@@ -522,20 +529,21 @@ function init() {
   function resetFunc() {
     playing = false
     clearInterval(timerId)
-    start.innerHTML = 'Play'
-    theme.pause()
-    theme.currentTime = 0
+    tetrisStart.innerHTML = 'Play'
+    tetrisTheme.pause()
+    tetrisTheme.currentTime = 0
     active = []
     colour1Array = []
     colour2Array = []
     colour3Array = []
     colour4Array = []
     colour5Array = []
+    banked = false
     squares.forEach(square => square.classList.remove(colour1, colour2, colour3, colour4, colour5))
     bankSquares.forEach(index => index.classList.remove(colour1, colour2, colour3, colour4, colour5))
     nextSquares.forEach(index => index.classList.remove(colour1, colour2, colour3, colour4, colour5))
     score = 0
-    domScore.innerHTML = score
+    tetrisDomScore.innerHTML = score
     resetX()
   }
 
@@ -543,9 +551,9 @@ function init() {
     clearInterval(timerId)
     tryAgainPopUp()
     playing = false
-    start.innerHTML = 'Play'
-    theme.pause()
-    theme.currentTime = 0
+    tetrisStart.innerHTML = 'Play'
+    tetrisTheme.pause()
+    tetrisTheme.currentTime = 0
   }
 
   function gameOverFunc(){
@@ -555,8 +563,8 @@ function init() {
   }
 
   function tryAgainPopUp() {
-    domPause.style.display = 'block'
-    domPause.innerHTML = 'Bad Luck, Try Again!'
+    tetrisDomPause.style.display = 'block'
+    tetrisDomPause.innerHTML = 'Bad Luck, Try Again!'
   }
 
   function keyDownEvents(e) {
@@ -598,7 +606,7 @@ function init() {
 
   function returnToMain() {
     resetFunc()
-    domPause.style.display = 'none'
+    tetrisDomPause.style.display = 'none'
     selectorContainer.style.display = 'flex'
     tetris.style.display = 'none'
     back.style.display = 'none'
@@ -609,12 +617,474 @@ function init() {
   bankGridCreate()
 
   // Event Handlers
-  
-  back.addEventListener('click', returnToMain)
+
   tetrisPlay.addEventListener('click', displayTetris)
   window.addEventListener('keyup', keyUpEvents)
   window.addEventListener('keydown', keyDownEvents)
-  start.addEventListener('click', startFunc)
+  tetrisStart.addEventListener('click', startFunc)
+
+  // TETRIS END
+
+  // FL TRON
+
+  // FL Tron DOM Variables
+
+  const flGameContainer = document.querySelector('.fl_tron_container')
+  const flStart = document.querySelector('.fl_start')
+  const numPlayers = document.querySelector('#num_players')
+  const numPlayersSpan = document.querySelector('label > span')
+  const players = document.querySelectorAll('.player')
+  const flPoint = document.querySelectorAll('.fl_point')
+  const flP1Points = document.querySelectorAll('.fl_P1_point')
+  const flP2Points = document.querySelectorAll('.fl_P2_point')
+  const flP3Points = document.querySelectorAll('.fl_P3_point')
+  const flP4Points = document.querySelectorAll('.fl_P4_point')
+  const flPlayerName = document.querySelector('#fl_player_name')
+  const flWinMessage = document.querySelector('.fl_message')
+  const flReset = document.querySelector('.fl_reset')
+  const flRoundDom = document.querySelector('#fl_round')
+  const flRoundMatch = document.querySelector('#fl_round_match')
+  const colourInputs = document.querySelectorAll('.colour_input')
+
+  // Variables
+
+  const flHeight = 80
+  const flWidth = 104
+  const flSquares = []
+  const fl2PStart = ((flHeight * flWidth) / 2) + (flWidth / 4)
+  const fl2PStart2 = ((flHeight * flWidth) / 2) + ((flWidth / 4) * 3)
+  const fl3PStart = fl2PStart - ((flHeight * flWidth) / 4)
+  const fl3PStart2 = fl2PStart2 - ((flHeight * flWidth) / 4)
+  const fl3PStart3 = (((flHeight * flWidth) / 4) * 3) + (flWidth / 2)
+  const fl4PStart3 = fl2PStart + ((flHeight * flWidth) / 4)
+  const fl4PStart4 = fl2PStart2 + ((flHeight * flWidth) / 4)
+  let arrayOfFlPlayers = []
+  let flRound = 1
+
+  let flP1 = null
+  let flP2 = null
+  let flP3 = null
+  let flP4 = null
+  let flP1Score = 0
+  let flP2Score = 0
+  let flP3Score = 0
+  let flP4Score = 0
+  
+
+
+  const flSpeed = 40
+  let flPlaying = false
+
+  class FlPlayer {
+    constructor(x, active) {
+      this.x = x,
+      this.active = active
+      this.directions = [
+        function() {
+          return this.x + 1
+        }, 
+        function() {
+          return this.x + flWidth
+        }, 
+        function() {
+          return this.x - 1
+        }, 
+        function() {
+          return this.x - flWidth
+        }
+      ]
+      this.direction = this.directions[0]
+      this.colour = '#000000'
+      // this.score = 0
+    }
+    flPlayerEnd() {
+      arrayOfFlPlayers.splice(arrayOfFlPlayers.indexOf(this), 1)
+    }
+    wallCollision() {
+      if (
+        this.x < 0 || 
+        this.x > (flHeight * flWidth) ||
+        ((this.x % flWidth === 0) && ((this.active[this.active.length - 1] + 1) % flWidth === 0)) ||
+        (((this.x + 1 ) % flWidth === 0) && (this.active[this.active.length - 1] % flWidth === 0))
+      ) {
+        this.flPlayerEnd()
+        flEndGame()
+      }
+    }
+    playerCollision() {
+      arrayOfFlPlayers.forEach(player => {
+        if (player.active.includes(this.x)) {
+          this.flPlayerEnd()
+          flEndGame()
+        }
+      })
+    }
+  }
+
+
+  function tronGridCreate() {
+    for (let i = 0; i < flHeight; i++) {
+      for (let i = 0; i < flWidth; i++) {
+        const square = document.createElement('div')
+        square.classList.add('fl_game_square')
+        flGameContainer.appendChild(square)
+        flSquares.push(square)
+      }
+    }
+  }
+
+  function flPaint() {
+    arrayOfFlPlayers.forEach(player => {
+      switch (player) {
+        case flP1:
+          player.active.forEach(index => flSquares[index].style.background = player.colour)
+          break
+        case flP2:
+          player.active.forEach(index => flSquares[index].style.background = player.colour)
+          break
+        case flP3:
+          player.active.forEach(index => flSquares[index].style.background = player.colour)
+          break
+        case flP4:
+          player.active.forEach(index => flSquares[index].style.background = player.colour)
+          break
+      }
+    })
+  }
+
+  function clearFlPaint() {
+    flSquares.forEach(index => index.classList.remove('fl_P1'))
+  }
+
+  function flPlayerCountCheck() {
+    if (arrayOfFlPlayers.length === 1) {
+      switch (arrayOfFlPlayers[0]) {
+        case flP1:
+          flP1Score++
+          break
+        case flP2:
+          flP2Score++
+          break
+        case flP3:
+          flP3Score++
+          break
+        case flP4:
+          flP4Score++
+          break
+      }
+      flUpdateScore()
+      clearInterval(timerId)
+      flPlaying = false
+      flMessage(arrayOfFlPlayers[0])
+      flWinMessage.style.display = 'inline'
+    }
+  }
+
+  function flKeyDown() {
+    if (!flPlaying) return
+    switch (event.key) {
+      case 'ArrowUp':
+        if (flP1.direction === flP1.directions[1]) return
+        flP1.direction = flP1.directions[3]
+        break
+      case 'ArrowLeft':
+        if (flP1.direction === flP1.directions[0]) return
+        flP1.direction = flP1.directions[2]
+        break
+      case 'ArrowDown':
+        if (flP1.direction === flP1.directions[3]) return
+        flP1.direction = flP1.directions[1]
+        break
+      case 'ArrowRight':
+        if (flP1.direction === flP1.directions[2]) return
+        flP1.direction = flP1.directions[0]
+        break
+    }
+  }
+
+  function flKeyDown2() {
+    if (!flPlaying) return
+    switch (event.key) {
+      case 'w':
+        if (flP2.direction === flP2.directions[1]) return
+        flP2.direction = flP2.directions[3]
+        break
+      case 'a':
+        if (flP2.direction === flP2.directions[0]) return
+        flP2.direction = flP2.directions[2]
+        break
+      case 's':
+        if (flP2.direction === flP2.directions[3]) return
+        flP2.direction = flP2.directions[1]
+        break
+      case 'd':
+        if (flP2.direction === flP2.directions[2]) return
+        flP2.direction = flP2.directions[0]
+        break
+    }
+  }
+
+  function flKeyDown3() {
+    if (!flPlaying) return
+    if (!arrayOfFlPlayers.includes(flP3)) return
+    switch (event.key) {
+      case 't':
+        if (flP3.direction === flP3.directions[1]) return
+        flP3.direction = flP3.directions[3]
+        break
+      case 'f':
+        if (flP3.direction === flP3.directions[0]) return
+        flP3.direction = flP3.directions[2]
+        break
+      case 'g':
+        if (flP3.direction === flP3.directions[3]) return
+        flP3.direction = flP3.directions[1]
+        break
+      case 'h':
+        if (flP3.direction === flP3.directions[2]) return
+        flP3.direction = flP3.directions[0]
+        break
+    }
+  }
+
+  function flKeyDown4() {
+    if (!flPlaying) return
+    if (!arrayOfFlPlayers.includes(flP4)) return
+    switch (event.key) {
+      case 'o':
+        if (flP4.direction === flP4.directions[1]) return
+        flP4.direction = flP4.directions[3]
+        break
+      case 'k':
+        if (flP4.direction === flP4.directions[0]) return
+        flP4.direction = flP4.directions[2]
+        break
+      case 'l':
+        if (flP4.direction === flP4.directions[3]) return
+        flP4.direction = flP4.directions[1]
+        break
+      case ';':
+        if (flP4.direction === flP4.directions[2]) return
+        flP4.direction = flP4.directions[0]
+        break
+    }
+  }
+
+  function flEndGame() {
+    console.log('Game Over')
+  }
+
+  function tick() {
+    flPaint()
+    arrayOfFlPlayers.forEach(flplayer => {
+      flplayer.x = flplayer.direction()
+      flplayer.playerCollision()
+      flplayer.wallCollision()
+      flplayer.active.push(flplayer.x)
+    })
+    flPlayerCountCheck()
+  }
+
+  function flMessage(p) {
+    switch (p) {
+      case flP1:
+        flPlayerName.innerHTML = 'Player 1'
+        break
+      case flP2:
+        flPlayerName.innerHTML = 'Player 2'
+        break
+      case flP3:
+        flPlayerName.innerHTML = 'Player 3'
+        break
+      case flP4:
+        flPlayerName.innerHTML = 'Player 4'
+        break
+    }
+    flRoundDom.innerHTML = flRound
+    if (flP1Score === 3 || flP2Score === 3 || flP3Score === 3 || flP4Score === 3) {
+      flRoundMatch.innerHTML = 'Match'
+      flRoundDom.innerHTML = ''
+    }
+  }
+
+  function winCondition() {
+    if (flP1Score === 3) {
+      flResetGame()
+    }
+    if (flP2Score === 3) {
+      flResetGame()
+    }
+    if (flP3Score === 3) {
+      flResetGame()
+    }
+    if (flP4Score === 3) {
+      flResetGame()
+    }
+  }
+
+  function flResetGame() {
+    numPlayers.disabled = false
+    flPoint.forEach(point => point.classList.remove('fl_point_fill'))
+    flP1Score = 0 
+    flP2Score = 0
+    flP3Score = 0
+    flP4Score = 0
+    flRound = 1
+    flRoundMatch.innerHTML = 'Round'
+  }
+
+  function flResetMatch() {
+    flWinMessage.style.display = 'none'
+    clearFlPaint()
+    setplayerStarting(parseInt(numPlayers.value))
+    flPaint()
+    flRound++
+    winCondition()
+  }
+
+  function flStartFunc() {
+    if (flPlaying) return
+    flPlaying = true
+    timerId = setInterval(tick, flSpeed)
+    numPlayers.disabled = true
+  }
+
+  function createPlayer1(position) {
+    flP1 = null
+    switch (position) {
+      case 1:
+        flP1 = new FlPlayer(fl2PStart, [fl2PStart])
+        break
+      case 2:
+        flP1 = new FlPlayer(fl3PStart, [fl3PStart])
+        break
+    }
+    arrayOfFlPlayers.push(flP1)
+  }
+
+  function createPlayer2(position) {
+    flP2 = null
+    switch (position) {
+      case 1:
+        flP2 = new FlPlayer(fl2PStart2, [fl2PStart2])
+        break
+      case 2:
+        flP2 = new FlPlayer(fl3PStart2, [fl3PStart2])
+        break
+    }
+    arrayOfFlPlayers.push(flP2)
+  }
+
+  function createPlayer3(position) {
+    flP3 = null
+    switch (position) {
+      case 1:
+        flP3 = new FlPlayer(fl3PStart3, [fl3PStart3])
+        break
+      case 2:
+        flP3 = new FlPlayer(fl4PStart3, [fl4PStart3])
+        break
+    }
+    arrayOfFlPlayers.push(flP3)
+  }
+
+  function createPlayer4() {
+    flP4 = null
+    flP4 = new FlPlayer(fl4PStart4, [fl4PStart4])
+    arrayOfFlPlayers.push(flP4)
+  }
+
+  function flUpdateScore() {
+    for (let i = 0; i < flP1Score; i++) {
+      flP1Points[i].classList.add('fl_point_fill')
+    }
+    for (let i = 0; i < flP2Score; i++) {
+      flP2Points[i].classList.add('fl_point_fill')
+    }
+    if (!flP3) return
+    for (let i = 0; i < flP3Score; i++) {
+      flP3Points[i].classList.add('fl_point_fill')
+    }
+    if (!flP4) return
+    for (let i = 0; i < flP4Score; i++) {
+      flP4Points[i].classList.add('fl_point_fill')
+    }
+  }
+
+  function colourChange() {
+    switch (event.target.getAttribute('data-id')) {
+      case '1':
+        flP1.colour = event.target.value
+        break
+      case '2':
+        flP2.colour = event.target.value
+        break
+      case '3':
+        flP3.colour = event.target.value
+        break
+      case '4':
+        flP4.colour = event.target.value
+        break
+    }
+    flPaint()
+  }
+
+  function setplayerStarting() {
+    switch (numPlayers.value) {
+      case '2':
+        arrayOfFlPlayers = []
+        createPlayer1(1)
+        createPlayer2(1)
+        break
+      case '3':
+        arrayOfFlPlayers = []
+        createPlayer1(2)
+        createPlayer2(2)
+        createPlayer3(1)
+        break
+      case '4':
+        arrayOfFlPlayers = []
+        createPlayer1(2)
+        createPlayer2(2)
+        createPlayer3(2)
+        createPlayer4()
+        break
+    }
+  }
+
+  function changeNumPlayers() {
+    numPlayersSpan.innerHTML = numPlayers.value
+    players.forEach(player => player.style.visibility = 'hidden')
+    for (let i = 0; i < numPlayers.value; i++) {
+      players[i].style.visibility = 'visible'
+    }
+    clearFlPaint()
+    setplayerStarting()
+    flPaint()
+  }
+
+  createPlayer1(1)
+  createPlayer2(1)
+
+  tronGridCreate()
+  flPaint()
+
+  // Event Handlers
+
+  window.addEventListener('keydown', flKeyDown)
+  window.addEventListener('keydown', flKeyDown2)
+  window.addEventListener('keydown', flKeyDown3)
+  window.addEventListener('keydown', flKeyDown4)
+  flStart.addEventListener('click', flStartFunc)
+  numPlayers.addEventListener('change', changeNumPlayers)
+  flReset.addEventListener('click', flResetMatch)
+  colourInputs.forEach(colourInput => colourInput.addEventListener('change', colourChange))
+  
+
+  // FL TRON END
+  
+  back.addEventListener('click', returnToMain)
+  
 }
 
 window.addEventListener('DOMContentLoaded', init)
