@@ -1134,7 +1134,6 @@ function init() {
   }
   
   back.addEventListener('click', returnToMain)
-  
 }
 
 window.addEventListener('DOMContentLoaded', init)

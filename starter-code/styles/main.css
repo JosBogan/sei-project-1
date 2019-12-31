@@ -42,15 +42,23 @@
 
 
 .tetris_selector {
-  background: #B794F4;
+  background: rgb(170, 137, 226);
   border: 1px solid #805AD5;
 }
 
+.tetris_selector:hover {
+  background: rgb(191, 155, 255);
+}
 
 .fl_tron_selector {
   background: #68D391;
   border: 1px solid rgb(59, 121, 83);
 }
+
+.fl_tron_selector:hover{
+  background: rgb(119, 243, 167);
+}
+
 
 .selector {
   height: 300px;
@@ -287,7 +295,6 @@ h2 {
 .fl_start:hover {
   background: #02FFE6;
 }
-
 
 .player {
   visibility: hidden;
