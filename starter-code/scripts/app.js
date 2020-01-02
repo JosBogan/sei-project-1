@@ -12,14 +12,14 @@ function init() {
   // Tetris DOM Variables
 
   const tetrisGameContainer = document.querySelector('.tetris_game_container')
-  const tetrisStart = document.querySelector('.start')
+  const tetrisStart = document.querySelector('#tetris_start')
   const tetrisDomScore = document.querySelector('.score')
   const tetrisNextGrid = document.querySelector('.next')
   const tetrisDomBank = document.querySelector('.bank')
-  const tetrisDomPause = document.querySelector('.paused')
+  const tetrisDomPause = document.querySelector('#tetris_paused')
   const tetrisTheme = document.querySelector('#theme')
   const tetrisPop = document.querySelector('#pop')
-  const tetris = document.querySelector('.tetris')
+  const tetris = document.querySelector('#tetris')
   const tetrisPlay = document.querySelector('.tetris_selector')
 
   // TETRIS
@@ -622,18 +622,18 @@ function init() {
   // FL Tron DOM Variables
 
   const flGameContainer = document.querySelector('.fl_tron_container')
-  const flTron = document.querySelector('.fl_tron')
-  const flStart = document.querySelector('.fl_start')
+  const flTron = document.querySelector('#fl_tron')
+  const flStart = document.querySelector('#fl_start')
   const numPlayers = document.querySelector('#num_players')
   const numPlayersSpan = document.querySelector('label > span')
-  const players = document.querySelectorAll('.player')
+  const players = document.querySelectorAll('.fl_player')
   const flPoint = document.querySelectorAll('.fl_point')
   const flP1Points = document.querySelectorAll('.fl_P1_point')
   const flP2Points = document.querySelectorAll('.fl_P2_point')
   const flP3Points = document.querySelectorAll('.fl_P3_point')
   const flP4Points = document.querySelectorAll('.fl_P4_point')
   const flPlayerName = document.querySelector('#fl_player_name')
-  const flWinMessage = document.querySelector('.fl_message')
+  const flWinMessage = document.querySelector('#fl_message')
   const flReset = document.querySelector('.fl_reset')
   const flRoundDom = document.querySelector('#fl_round')
   const flRoundMatch = document.querySelector('#fl_round_match')
@@ -657,27 +657,18 @@ function init() {
   let flP2 = null
   let flP3 = null
   let flP4 = null
-  let flP1Score = 0
-  let flP2Score = 0
-  let flP3Score = 0
-  let flP4Score = 0
-  let flP1colour = '#000000'
-  let flP2colour = '#000000'
-  let flP3colour = '#000000'
-  let flP4colour = '#000000'
 
   let arrayOfFlPlayers = []
   let arrayOfAllFlPlayers = []
   let flRound = 1
 
-  
-
-
   const flSpeed = 40
   let flPlaying = false
+  let flResetScreen = false
 
   class FlPlayer {
-    constructor(x, active) {
+    constructor(x, active, name, pointList) {
+      this.name = name
       this.x = x,
       this.active = active
       this.directions = [
@@ -695,8 +686,8 @@ function init() {
         }
       ]
       this.direction = this.directions[0]
-      this.colour = '#000000'
-      // this.score = 0
+      this.score = 0
+      this.pointsList = pointList
     }
     flPlayerEnd() {
       arrayOfFlPlayers.splice(arrayOfFlPlayers.indexOf(this), 1)
@@ -720,7 +711,6 @@ function init() {
     }
   }
 
-
   function tronGridCreate() {
     for (let i = 0; i < flHeight; i++) {
       for (let i = 0; i < flWidth; i++) {
@@ -734,64 +724,30 @@ function init() {
 
   function flPaint() {
     arrayOfFlPlayers.forEach(player => {
-      switch (player) {
-        case flP1:
-          player.active.forEach(index => flSquares[index].style.background = flP1colour)
-          break
-        case flP2:
-          player.active.forEach(index => flSquares[index].style.background = flP2colour)
-          break
-        case flP3:
-          player.active.forEach(index => flSquares[index].style.background = flP3colour)
-          break
-        case flP4:
-          player.active.forEach(index => flSquares[index].style.background = flP4colour)
-          break
-      }
+      player.active.forEach(index => {
+        flSquares[index].classList.add(`${player.name}background`)
+      })
     })
   }
 
   function flResetPaint() {
     arrayOfAllFlPlayers.forEach(player => {
-      switch (player) {
-        case flP1:
-          player.active.forEach(index => flSquares[index].style.background = flP1colour)
-          break
-        case flP2:
-          player.active.forEach(index => flSquares[index].style.background = flP2colour)
-          break
-        case flP3:
-          player.active.forEach(index => flSquares[index].style.background = flP3colour)
-          break
-        case flP4:
-          player.active.forEach(index => flSquares[index].style.background = flP4colour)
-          break
-      }
+      player.active.forEach(index => {
+        flSquares[index].classList.add(`${player.name}background`)
+      })
     })
   }
 
   function clearFlPaint() {
-    flSquares.forEach(index => index.style.background = '')
+    flSquares.forEach(index => index.classList.remove('flP1background', 'flP2background', 'flP3background', 'flP4background'))
   }
 
   function flPlayerCountCheck() {
     if (arrayOfFlPlayers.length === 1) {
-      switch (arrayOfFlPlayers[0]) {
-        case flP1:
-          flP1Score++
-          break
-        case flP2:
-          flP2Score++
-          break
-        case flP3:
-          flP3Score++
-          break
-        case flP4:
-          flP4Score++
-          break
-      }
+      arrayOfFlPlayers[0].score++
       flUpdateScore()
       clearInterval(timerId)
+      flResetScreen = true
       flPlaying = false
       flMessage(arrayOfFlPlayers[0])
       flWinMessage.style.display = 'inline'
@@ -915,23 +871,14 @@ function init() {
         break
     }
     flRoundDom.innerHTML = flRound
-    if (flP1Score === 3 || flP2Score === 3 || flP3Score === 3 || flP4Score === 3) {
+    if (arrayOfFlPlayers[0].score === 3) {
       flRoundMatch.innerHTML = 'Match'
       flRoundDom.innerHTML = ''
     }
   }
 
   function winCondition() {
-    if (flP1Score === 3) {
-      flResetGame()
-    }
-    if (flP2Score === 3) {
-      flResetGame()
-    }
-    if (flP3Score === 3) {
-      flResetGame()
-    }
-    if (flP4Score === 3) {
+    if (arrayOfFlPlayers[0].score === 3) {
       flResetGame()
     }
   }
@@ -939,13 +886,9 @@ function init() {
   function flResetGame() {
     numPlayers.disabled = false
     flPoint.forEach(point => point.classList.remove('fl_point_fill'))
-    flP1Score = 0 
-    flP2Score = 0
-    flP3Score = 0
-    flP4Score = 0
+    arrayOfAllFlPlayers.forEach(player => player.score = 0)
     flRound = 1
     flRoundMatch.innerHTML = 'Round'
-    
   }
 
   function flResetMatch() {
@@ -954,9 +897,10 @@ function init() {
     resetPlayers()
     flResetPaint()
     flRound++
+    winCondition()
+    flResetScreen = false
     arrayOfFlPlayers = []
     arrayOfAllFlPlayers.forEach(player => arrayOfFlPlayers.push(player))
-    winCondition()
   }
 
   function resetPlayers() {
@@ -967,7 +911,7 @@ function init() {
   }
 
   function flStartFunc() {
-    if (flPlaying) return
+    if (flPlaying || flResetScreen) return
     if (flRound === 1) {
       arrayOfAllFlPlayers = []
       arrayOfFlPlayers.forEach(player => arrayOfAllFlPlayers.push(player))
@@ -981,10 +925,10 @@ function init() {
     flP1 = null
     switch (position) {
       case 1:
-        flP1 = new FlPlayer(fl2PStart, [fl2PStart])
+        flP1 = new FlPlayer(fl2PStart, [fl2PStart], 'flP1', flP1Points)
         break
       case 2:
-        flP1 = new FlPlayer(fl3PStart, [fl3PStart])
+        flP1 = new FlPlayer(fl3PStart, [fl3PStart], 'flP1', flP1Points)
         break
     }
     arrayOfFlPlayers.push(flP1)
@@ -994,10 +938,10 @@ function init() {
     flP2 = null
     switch (position) {
       case 1:
-        flP2 = new FlPlayer(fl2PStart2, [fl2PStart2])
+        flP2 = new FlPlayer(fl2PStart2, [fl2PStart2], 'flP2', flP2Points)
         break
       case 2:
-        flP2 = new FlPlayer(fl3PStart2, [fl3PStart2])
+        flP2 = new FlPlayer(fl3PStart2, [fl3PStart2], 'flP2', flP2Points)
         break
     }
     arrayOfFlPlayers.push(flP2)
@@ -1007,10 +951,10 @@ function init() {
     flP3 = null
     switch (position) {
       case 1:
-        flP3 = new FlPlayer(fl3PStart3, [fl3PStart3])
+        flP3 = new FlPlayer(fl3PStart3, [fl3PStart3], 'flP3', flP3Points)
         break
       case 2:
-        flP3 = new FlPlayer(fl4PStart3, [fl4PStart3])
+        flP3 = new FlPlayer(fl4PStart3, [fl4PStart3], 'flP3', flP3Points)
         break
     }
     arrayOfFlPlayers.push(flP3)
@@ -1018,47 +962,19 @@ function init() {
 
   function createPlayer4() {
     flP4 = null
-    flP4 = new FlPlayer(fl4PStart4, [fl4PStart4])
+    flP4 = new FlPlayer(fl4PStart4, [fl4PStart4], 'flP4', flP4Points)
     arrayOfFlPlayers.push(flP4)
   }
 
   function flUpdateScore() {
-    for (let i = 0; i < flP1Score; i++) {
-      flP1Points[i].classList.add('fl_point_fill')
-    }
-    for (let i = 0; i < flP2Score; i++) {
-      flP2Points[i].classList.add('fl_point_fill')
-    }
-    if (!flP3) return
-    for (let i = 0; i < flP3Score; i++) {
-      flP3Points[i].classList.add('fl_point_fill')
-    }
-    if (!flP4) return
-    for (let i = 0; i < flP4Score; i++) {
-      flP4Points[i].classList.add('fl_point_fill')
+    for (let i = 0; i < arrayOfFlPlayers[0].score; i++) {
+      arrayOfFlPlayers[0].pointsList[i].classList.add('fl_point_fill')
     }
   }
 
   function colourChange() {
     const flColour = event.target.value
-    switch (event.target.getAttribute('data-id')) {
-      case '1':
-        flP1.colour = flColour
-        flP1colour = flColour
-        break
-      case '2':
-        flP2.colour = flColour
-        flP2colour = flColour
-        break
-      case '3':
-        flP3.colour = flColour
-        flP3colour = flColour
-        break
-      case '4':
-        flP4.colour = flColour
-        flP4colour = flColour
-        break
-    }
+    document.documentElement.style.setProperty(`--${this.dataset.name}`, flColour)
     flPaint()
   }
 

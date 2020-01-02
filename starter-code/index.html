@@ -21,9 +21,9 @@
           <h2>FL Tron</h2>
         </div>
       </div>
-      <div class="tetris">
-        <div class= side_bar>
-          <button class="start">Play</button>
+      <div class="outer_game_container" id="tetris">
+        <div class="side_bar tetris_side_bar">
+          <button class="start" id="tetris_start">Play</button>
           <h2 class="side_head">Next Block</h2>
           <div class="next"></div>
           <h2 class="side_head">Bank</h2>
@@ -31,71 +31,59 @@
           <h2 class="side_head">Score</h2>
           <div class="score">0</div>
         </div>
-        <div class="tetris_game_container">
-          <div class="paused">Paused</div>
+        <div class="inner_game_container tetris_game_container">
+          <div class="message_text" id="tetris_paused">Paused</div>
         </div>
       </div>
-      <div class="fl_tron">
-        <div class="fl_side_bar">
-          <button class="fl_start">Play</button>
+      <div class="outer_game_container" id="fl_tron">
+        <div class="fl_side_bar side_bar">
+          <button class="start" id="fl_start">Play</button>
           <div class="players">
             <form>
               <label for="num_players">Number of Players: <span>2</span></label>
               <input type="range" min="2", max="4" value="2" id="num_players">
             </form>
-            <div class="player player1">
+            <div class="fl_player fl_player1">
               <h2>Player1</h2>
               <div class="fl_points">
-                <input class="colour_input" data-id="1" type="color">
+                <input class="colour_input" data-id="1" data-name="flP1Colour" type="color">
                 <div class="fl_point fl_P1_point"></div>
                 <div class="fl_point fl_P1_point"></div>
                 <div class="fl_point fl_P1_point"></div>
               </div>
-              <form>
-                <!-- <input type="checkbox"> -->
-              </form>
             </div>
-            <div class="player player2">
+            <div class="fl_player fl_player2">
               <h2>Player2</h2>
               <div class="fl_points">
-                <input class="colour_input" data-id="2" type="color">
+                <input class="colour_input" data-id="2" data-name="flP2Colour" type="color">
                 <div class="fl_point fl_P2_point"></div>
                 <div class="fl_point fl_P2_point"></div>
                 <div class="fl_point fl_P2_point"></div>
               </div>
-              <form>
-                <!-- <input type="checkbox"> -->
-              </form>
             </div>
-            <div class="player player3">
+            <div class="fl_player fl_player3">
               <h2>Player3</h2>
               <div class="fl_points">
-                <input class="colour_input" data-id="3" type="color">
+                <input class="colour_input" data-id="3" data-name="flP3Colour" type="color">
                 <div class="fl_point fl_P3_point"></div>
                 <div class="fl_point fl_P3_point"></div>
                 <div class="fl_point fl_P3_point"></div>
               </div>
-              <form>
-                <!-- <input type="checkbox"> -->
-              </form>
             </div>
-            <div class="player player4">
+            <div class="fl_player fl_player4">
               <h2>Player4</h2>
               <div class="fl_points">
-                <input class="colour_input" data-id="4" type="color">
+                <input class="colour_input" data-id="4" data-name="flP4Colour" type="color">
                 <div class="fl_point fl_P4_point"></div>
                 <div class="fl_point fl_P4_point"></div>
                 <div class="fl_point fl_P4_point"></div>
               </div class="fl_points">
-              <form>
-                <!-- <input type="checkbox"> -->
-              </form>
             </div>
           </div>
         </div>
         <div>
-          <div class="fl_tron_container">
-            <div class="fl_message"><span id="fl_round_match">Round</span> <span id="fl_round"></span><br /><span id='fl_player_name'></span> win<br /><span class="fl_reset">Reset Board</span></div>
+          <div class="inner_game_container fl_tron_container">
+            <div class="message_text" id="fl_message"><span id="fl_round_match">Round</span> <span id="fl_round"></span><br /><span id='fl_player_name'></span> win<br /><span class="fl_reset">Reset Board</span></div>
           </div>
         </div>
       </div>
