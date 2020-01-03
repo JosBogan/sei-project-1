@@ -34,12 +34,27 @@
 }
 
 .selector_container {
-  width: 500px;
+  width: 700px;
   display: flex;
   justify-content: space-between;
   /* display: none; */
 }
 
+.selector {
+  height: 300px;
+  width: 200px;
+  /* margin: 0 100px; */
+  border-radius: 20px;
+  cursor: pointer;
+  -webkit-box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.25);
+  -moz-box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.25);
+  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.25);
+  transition: all 0.2s;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 
 .tetris_selector {
   background: rgb(170, 137, 226);
@@ -59,25 +74,16 @@
   background: rgb(119, 243, 167);
 }
 
+.frogger_selector {
+  background: rgb(66, 176, 216);
+  border: 1px solid rgb(45, 123, 151);
+}
 
-.selector {
-  height: 300px;
-  width: 200px;
-  border-radius: 20px;
-  cursor: pointer;
-  -webkit-box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.25);
-  -moz-box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.25);
-  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.25);
-  transition: all 0.2s;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.frogger_selector:hover {
+  background: rgb(97, 213, 255);
 }
 
 .selector:hover {
-  -webkit-box-shadow: -5px 5px 0px 0px rgba(0,0,0,0.25);
-  -moz-box-shadow: -5px 5px 0px 0px rgba(0,0,0,0.25);
   box-shadow: -5px 5px 0px 0px rgba(0,0,0,0.25);
 }
 
@@ -287,3 +293,44 @@ h2 {
   color:  rgb(30, 212, 197);
   cursor: pointer;
 }
+
+ /* FROGGER SPECIFIC  */
+
+ .frogger_side_bar {
+  height: 522px;
+ }
+
+ .frogger_game_container {
+   min-width: 441px;
+   max-width: 441px;
+ }
+
+ .frogger_game_square {
+   height: 40px;
+   width: 40px;
+   border: 1px solid black;
+ }
+
+ .frogger_pavement {
+   background: red;
+ }
+
+ .frogger_pad {
+   background: green;
+ }
+
+ .frogger_road {
+   background: gray;
+ }
+
+ .frogger_water {
+   background: aqua;
+ }
+
+ .frog {
+   background: greenyellow;
+ }
+
+ .car1 {
+   background: black;
+ }
