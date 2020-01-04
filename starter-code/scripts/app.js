@@ -1047,36 +1047,99 @@ function init() {
   const froggerStartingPos = Math.floor((froggerWidth * froggerHeight) - (froggerWidth / 2))
   let frogLives = 3
 
-  const allCars = []
-
   class RowTraits {
     constructor(time, row, speed) {
-      this.cars = [],
+      this.items = [],
       this.time = time,
       this.speed = speed
       this.createId = null,
-      this.moveId = null,
-      this.startingPosition = (froggerWidth * froggerHeight) - (froggerWidth * row)
+      this.moveId = null
     }
   }
 
-  const row1 = new RowTraits(1500, 1, 250)
-  const row2 = new RowTraits(1000, 3, 250)
-  const row3 = new RowTraits(2000, 3, 500)
-  const row4 = new RowTraits(1000, 4, 250)
-  const row5 = new RowTraits(1250, 4, 250)
-
-  const froggerRows = {
-    left: [row1, row3, row5],
-    right: [row2, row4]
+  class RightRow extends RowTraits {
+    constructor(time, row, speed) {
+      super(time, row, speed), 
+      this.startingPosition = (froggerWidth * row) - froggerWidth
+      this.endingPosition = (froggerWidth * row) - 1
+    }
+    edgeCollision() {
+      this.items = this.items.filter(item => {
+        if (item.positions) {
+          if (item.positions.length === 0) {
+            return false
+          }
+          return true
+        }
+        return item.position <= this.endingPosition
+      })
+    }
+    move() {
+      this.items.forEach(item => {
+        if (item.truePositions) {
+          for (let i = 0; i < item.truePositions.length; i++) {
+            item.truePositions[i]++
+          }
+          item.trueToActive(this)
+        } else {
+          item.position++
+        }
+      })
+    }
   }
 
-  const car1StartPos = (froggerWidth * froggerHeight) - (froggerWidth)
-  let cars1 = []
-  const car1Time = 1000
-  let cars1CreateTimerId = null
-  let cars1MoveTimerId = null
+  class LeftRow extends RowTraits {
+    constructor(time, row, speed) {
+      super(time, row, speed), 
+      this.startingPosition = (froggerWidth * row) - 1
+      this.endingPosition = (froggerWidth * row) - froggerWidth
+    }
+    edgeCollision() {
+      this.items = this.items.filter(item => {
+        if (item.positions) {
+          if (item.positions.length === 0) {
+            return false
+          }
+          return true
+        }
+        return item.position <= this.endingPosition
+      })
+    }
+    move() {
+      this.items.forEach(item => {
+        console.log(item.truePositions)
+        if (item.truePositions) {
+          for (let i = 0; i < item.truePositions.length; i++) {
+            item.truePositions[i]--
+          }
+          item.trueToActive(this)
+        } else {
+          item.position--
+        }
+      })
+    }
+  }
 
+  const row1 = new LeftRow(2500, 12, 500)
+  const row2 = new RightRow(2250, 11, 750)
+  const row3 = new LeftRow(2250, 10, 500)
+  const row4 = new RightRow(3000, 9, 500)
+  const row5 = new LeftRow(1250, 8, 250)
+  const row6 = new LeftRow(2500, 6, 500)
+  const row7 = new RightRow(2500, 5, 500)
+  const row8 = new RightRow(2500, 4, 500)
+  const row9 = new LeftRow(2500, 3, 500)
+  const row10 = new RightRow(2500, 2, 500)
+
+
+  const froggerRows = {
+    left: [row1, row3, row5, row6, row9],
+    right: [row2, row4, row7, row8, row10],
+    all: [row1, row2, row3, row4, row5, row6, row7, row8, row9, row10],
+    logRows: [row6, row7, row8, row9, row10],
+    carRows: [row1, row2, row3, row4, row5]
+  }
+  
   let pavementArray = null
   let lilyPadArray = null
   let roadArray = null
@@ -1097,7 +1160,33 @@ function init() {
     }
   }
 
-
+  class Log {
+    constructor(position, leng) {
+      this.position = position
+      this.leng = leng
+      this.positions = []
+      this.truePositions = []
+    }
+    trueToActive(row) {
+      if (this.truePositions) {
+        this.positions = this.truePositions.filter(position => {
+          return (position >= row.startingPosition && position <= row.endingPosition) ||
+                 (position <= row.startingPosition && position >= row.endingPosition)
+        })
+      }
+    }
+    populatePositions(row) {
+      if (froggerRows.right.includes(row)) {
+        for (let i = 0; i < this.leng; i++) {
+          this.truePositions.push(this.position - i)
+        }
+      } else if (froggerRows.left.includes(row)) {
+        for (let i = 0; i < this.leng; i++) {
+          this.truePositions.push(this.position + i)
+        }
+      }
+    }
+  }
 
   // FUNCTIONS
 
@@ -1106,11 +1195,19 @@ function init() {
     froggerSquares[activeFrog.position].classList.add('frog')
   }
 
-  function carPaint() {
+  function froggerItemPaint() {
     froggerSquares.forEach(square => square.classList.remove('car1'))
-    row1.cars.forEach(car => froggerSquares[car.position].classList.add('car1'))
-    row2.cars.forEach(car => froggerSquares[car.position].classList.add('car1'))
-    row3.cars.forEach(car => froggerSquares[car.position].classList.add('car1'))
+    froggerRows.carRows.forEach(row => row.items.forEach(car => froggerSquares[car.position].classList.add('car1')))
+  }
+
+  function froggerLogPaint() {
+    froggerSquares.forEach(square => square.classList.remove('log'))
+    // froggerRows.logRows.forEach(row => row.items.forEach(log => froggerSquares[log.position].classList.add('log')))
+    froggerRows.logRows.forEach(row => row.items.forEach(log => {
+      log.positions.forEach(pos => {
+        froggerSquares[pos].classList.add('log')
+      })
+    }))
   }
 
   function createFrog() {
@@ -1118,20 +1215,25 @@ function init() {
     frogs.push(activeFrog)
   }
 
-  function createCar(row) {
-    row.cars.push(new Car(row.startingPosition, 1))
+  function createItem(row) {
+    row.items.push(new Car(row.startingPosition, 1))
+    froggerItemPaint()
   }
 
-  function moveCar(row) {
-    if (froggerRows.left.includes(row)) {
-      row.cars.forEach(car => car.position--)
-      row.cars = row.cars.filter(car => car.position > row.startingPosition - (froggerWidth + 1))
-    } else if (froggerRows.right.includes(row)) {
-      row.cars.forEach(car => car.position++)
-      row.cars = row.cars.filter(car => car.position < row.startingPosition + (froggerWidth + 1))
-    }
+  function createLog(row) {
+    const newLog = new Log(row.startingPosition, 3)
+    newLog.populatePositions(row)
+    newLog.trueToActive(row)
+    row.items.push(newLog)
+    froggerLogPaint()
+  }
+
+  function froggerMoveObject(row) {
+    row.move()
+    row.edgeCollision()
     if (froggerCarCollisionCheck()) frogDead(), froggerPaint()
-    carPaint()
+    froggerItemPaint()
+    froggerLogPaint()
   }
 
   // BOARD CREATION
@@ -1141,6 +1243,7 @@ function init() {
       for (let i = 0; i < froggerWidth; i++) {
         const square = document.createElement('div')
         square.classList.add('frogger_game_square')
+        square.innerHTML = i
         froggerGameContainer.appendChild(square)
         froggerSquares.push(square)
       }
@@ -1191,47 +1294,114 @@ function init() {
 
   // TIMERS 
 
-  function cars1Timer() {
-    row1.createId = setInterval(function() {
-      createCar(row1)
-    }, row1.time)
+  // CARS
+
+  function row1Timer() {
+    createItem(row1)
     row1.moveId = setInterval(function() {
-      moveCar(row1)
+      froggerMoveObject(row1)
     }, row1.speed)
+    row1.createId = setInterval(function() {
+      createItem(row1)
+    }, row1.time)
   }
   
-  function cars2Timer() {
-    row2.createId = setInterval(function() {
-      createCar(row2)
-    }, row2.time)
+  function row2Timer() {
+    createItem(row2)
     row2.moveId = setInterval(function() {
-      moveCar(row2)
+      froggerMoveObject(row2)
     }, row2.speed)
+    row2.createId = setInterval(function() {
+      createItem(row2)
+    }, row2.time)
   }
 
-  function cars3Timer() {
-    row3.createId = setInterval(function() {
-      createCar(row3)
-    }, row3.time)
+  function row3Timer() {
+    createItem(row3)
     row3.moveId = setInterval(function() {
-      moveCar(row3)
+      froggerMoveObject(row3)
     }, row3.speed)
+    row3.createId = setInterval(function() {
+      createItem(row3)
+    }, row3.time)
   }
 
-  // function cars4Timer() {
-  //   cars4CreateTimerId = setInterval(createCar, 1000)
-  //   cars4MoveTimerId = setInterval(moveCar1, 250)
-  // }
+  function row4Timer() {
+    createItem(row4)
+    row4.createId = setInterval(function() {
+      createItem(row4)
+    }, row4.time)
+    row4.moveId = setInterval(function() {
+      froggerMoveObject(row4)
+    }, row4.speed)
+  }
 
-  // function cars5Timer() {
-  //   cars5CreateTimerId = setInterval(createCar, 1000)
-  //   cars5MoveTimerId = setInterval(moveCar1, 250)
-  // }
+  function row5Timer() {
+    createItem(row5)
+    row5.moveId = setInterval(function() {
+      froggerMoveObject(row5)
+    }, row5.speed)
+    row5.createId = setInterval(function() {
+      createItem(row5)
+    }, row5.time)
+  }
+
+  // LOGS
+
+  function row6Timer() {
+    createLog(row6)
+    row6.moveId = setInterval(function() {
+      froggerMoveObject(row6)
+    }, row6.speed)
+    row6.createId = setInterval(function() {
+      createLog(row6)
+    }, row6.time)
+  }
+
+  function row7Timer() {
+    createLog(row7)
+    row7.moveId = setInterval(function() {
+      froggerMoveObject(row7)
+    }, row7.speed)
+    row7.createId = setInterval(function() {
+      createLog(row7)
+    }, row7.time)
+  }
+
+  function row8Timer() {
+    createLog(row8)
+    row8.moveId = setInterval(function() {
+      froggerMoveObject(row8)
+    }, row8.speed)
+    row8.createId = setInterval(function() {
+      createLog(row8)
+    }, row8.time)
+  }
+
+  function row9Timer() {
+    createLog(row9)
+    row9.moveId = setInterval(function() {
+      froggerMoveObject(row9)
+    }, row9.speed)
+    row9.createId = setInterval(function() {
+      createLog(row9)
+    }, row9.time)
+  }
+
+  function row10Timer() {
+    createLog(row10)
+    row10.moveId = setInterval(function() {
+      froggerMoveObject(row10)
+    }, row10.speed)
+    row10.createId = setInterval(function() {
+      createLog(row10)
+    }, row10.time)
+  }
 
   // COLLISION CHECKERS
 
   function froggerCarCollisionCheck() {
-    return cars1.some(car => car.position === activeFrog.position)
+    return froggerRows.carRows.some(row => row.items.some(car => car.position === activeFrog.position))
   }
 
   function froggerBottomCheck() {
@@ -1296,10 +1466,18 @@ function init() {
     selectorContainer.style.display = 'none'
     frogger.style.display = 'flex'
     back.style.display = 'block'
-    cars1Timer()
-    cars2Timer()
-    cars3Timer()
+    // row1Timer()
+    row2Timer()
+    // row3Timer()
+    // row4Timer()
+    // row5Timer()
+    // row6Timer()
+    // row7Timer()
+    // row8Timer()
+    // row9Timer()
+    // row10Timer()
   }
+  console.log(froggerSquares[row7.startingPosition])
 
   // EVENT LISTENERS
 
