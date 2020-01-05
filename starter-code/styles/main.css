@@ -296,6 +296,10 @@ h2 {
 
  /* FROGGER SPECIFIC  */
 
+ :root {
+   --frog_bg: url('')
+ }
+
  .frogger_side_bar {
   height: 522px;
  }
@@ -311,12 +315,14 @@ h2 {
  }
 
  .frogger_pavement {
-   background-image: url('../assets/pavement_tile.svg');
+   background: 
+      url('../assets/pavement_tile.svg');
  }
 
  .frogger_pad {
-   background: aqua;
-   background-image: url('../assets/LilyPad.svg');
+   background-image: 
+      url('../assets/LilyPad.svg'),
+      url('../assets/Water.svg');
  }
 
  .frogger_road {
@@ -324,7 +330,7 @@ h2 {
  }
 
  .frogger_water {
-   background: aqua;
+   background: url('../assets/Water.svg');
  }
 
  .car1 {
@@ -350,12 +356,18 @@ h2 {
 }
 
 .frog {
- /* background: greenyellow; */
- background: url('../assets/frog.svg');
+ background: 
+    url('../assets/frog.svg'),
+    var(--frog_bg);
 }
 
 .frog_win {
- background: darkgreen;
+  background: 
+    url('../assets/frog.svg') center/50%,
+    url('../assets/LilyPad.svg'),
+    url('../assets/Water.svg');
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .frogger_point_container {

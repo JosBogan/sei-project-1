@@ -1182,20 +1182,33 @@ function init() {
 
   function froggerPaint() {
     froggerSquares.forEach(square => square.classList.remove('frog'))
+    if (pavementArray.includes(froggerSquares[activeFrog.position])) {
+      document.documentElement.style.setProperty('--frog_bg', 'url("../assets/pavement_tile.svg")')
+    } else if (roadArray.includes(froggerSquares[activeFrog.position])) {
+      document.documentElement.style.setProperty('--frog_bg', 'url("../assets/road_tile.svg")')
+    } else if (froggerRows.logRows.some(row => row.items.some(item => item.positions.includes(activeFrog.position)))) {
+      // document.documentElement.style.setProperty('--frog_bg', 'url("../assets/log_tile.svg")')
+    }
     froggerSquares[activeFrog.position].classList.add('frog')
   }
 
   function froggerItemPaint() {
     froggerSquares.forEach(square => square.classList.remove('log'))
     froggerSquares.forEach(square => square.classList.remove('car1'))
+    froggerSquares.forEach(square => square.classList.remove('car2'))
     froggerRows.logRows.forEach(row => row.items.forEach(log => {
       log.positions.forEach(pos => {
         froggerSquares[pos].classList.add('log')
       })
     }))
-    froggerRows.carRows.forEach(row => row.items.forEach(car => {
+    froggerRows.carRows.filter(carRow => froggerRows.right.includes(carRow)).forEach(row => row.items.forEach(car => {
       car.positions.forEach(pos => {
         froggerSquares[pos].classList.add('car1')
+      })
+    }))
+    froggerRows.carRows.filter(carRow => froggerRows.left.includes(carRow)).forEach(row => row.items.forEach(car => {
+      car.positions.forEach(pos => {
+        froggerSquares[pos].classList.add('car2')
       })
     }))
   }
@@ -1494,8 +1507,7 @@ function init() {
     froggerClearTimers()
     froggerMessageDisplay()
     froggerPlaying = false
-    froggerSeconds = 0
-    froggerMins = 3
+    froggerStart.innerHTML = 'Reset'
   }
 
   function froggerMessageDisplay() {
@@ -1517,12 +1529,36 @@ function init() {
   function froggerClearBoard() {
     froggerRows.all.forEach(row => row.items = [])
     froggerItemPaint()
+    froggerLifePoints.forEach(point => point.classList.add('frogger_point_fill'))
+    froggerSaved.forEach(savedPoint => savedPoint.classList.remove('frogger_point_fill'))
+    froggerWinSet.clear()
+    froggerSquares.forEach(square => square.classList.remove('frog_win'))
+    froggerSeconds = 0
+    froggerDOMSecs.innerHTML =  '00'
+    froggerMins = 3
+    froggerDOMMins.innerHTML = froggerMins
+    froggerLives = 3
+    froggerMessageHide()
   }
 
   function froggerHardReset() {
     froggerClearTimers()
     froggerClearBoard()
     froggerPlaying = false
+  }
+
+  function setTimers() {
+    froggerClearBoard()
+    row1Timer()
+    row2Timer()
+    row3Timer()
+    row4Timer()
+    row5Timer()
+    row6Timer()
+    row7Timer()
+    row8Timer()
+    row9Timer()
+    row10Timer()
   }
 
   function froggerMove() {
@@ -1547,12 +1583,17 @@ function init() {
         break
     }
     froggerLogCheck()
+    if (froggerCarCollisionCheck()) frogDead()
     froggerPaint()
   }
 
   function froggerStartFunc() {
-    froggerPlaying = true
-    froggerGameTimerId = setInterval(froggerClockTick, 1000)
+    if (!froggerPlaying) {
+      froggerPlaying = true
+      froggerGameTimerId = setInterval(froggerClockTick, 1000)
+      froggerStart.innerHTML = 'Play'
+      setTimers()
+    }
   }
 
   froggerGridCreate()
@@ -1567,16 +1608,6 @@ function init() {
     selectorContainer.style.display = 'none'
     frogger.style.display = 'flex'
     back.style.display = 'block'
-    row1Timer()
-    row2Timer()
-    row3Timer()
-    row4Timer()
-    row5Timer()
-    row6Timer()
-    row7Timer()
-    row8Timer()
-    row9Timer()
-    row10Timer()
   }
 
   // EVENT LISTENERS
