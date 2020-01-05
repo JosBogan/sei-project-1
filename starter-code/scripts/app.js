@@ -1034,6 +1034,8 @@ function init() {
   const frogger = document.querySelector('#frogger')
   const froggerGameContainer = document.querySelector('.frogger_game_container')
   const froggerStart = document.querySelector('#frogger_start')
+  const froggerLives = document.querySelectorAll('.frogger_life')
+  const froggerSaved = document.querySelectorAll('.frogger_safe')
 
   // VARIABLES
 
@@ -1046,6 +1048,8 @@ function init() {
   let activeFrog = null
   const froggerStartingPos = Math.floor((froggerWidth * froggerHeight) - (froggerWidth / 2))
   let frogLives = 3
+
+  const froggerWinSet = new Set([])
 
   class RowTraits {
     constructor(time, row, speed) {
@@ -1065,26 +1069,20 @@ function init() {
     }
     edgeCollision() {
       this.items = this.items.filter(item => {
-        if (item.positions) {
-          if (item.positions.length === 0) {
-            return false
-          }
-          return true
+        if (item.positions.length === 0) {
+          return false
         }
-        return item.position <= this.endingPosition
+        return true
       })
     }
     move() {
       this.items.forEach(item => {
-        if (item.truePositions) {
-          for (let i = 0; i < item.truePositions.length; i++) {
-            item.truePositions[i]++
-          }
-          item.trueToActive(this)
-        } else {
-          item.position++
+        for (let i = 0; i < item.truePositions.length; i++) {
+          item.truePositions[i]++
         }
+        item.trueToActive(this)
       })
+      if (this.items.some(item => item.positions.includes(activeFrog.position)) && froggerRows.logRows.includes(this)) activeFrog.position++
     }
   }
 
@@ -1096,27 +1094,20 @@ function init() {
     }
     edgeCollision() {
       this.items = this.items.filter(item => {
-        if (item.positions) {
-          if (item.positions.length === 0) {
-            return false
-          }
-          return true
+        if (item.positions.length === 0) {
+          return false
         }
-        return item.position <= this.endingPosition
+        return true
       })
     }
     move() {
       this.items.forEach(item => {
-        console.log(item.truePositions)
-        if (item.truePositions) {
-          for (let i = 0; i < item.truePositions.length; i++) {
-            item.truePositions[i]--
-          }
-          item.trueToActive(this)
-        } else {
-          item.position--
+        for (let i = 0; i < item.truePositions.length; i++) {
+          item.truePositions[i]--
         }
+        item.trueToActive(this)
       })
+      if (this.items.some(item => item.positions.includes(activeFrog.position)) && froggerRows.logRows.includes(this)) activeFrog.position--
     }
   }
 
@@ -1126,10 +1117,10 @@ function init() {
   const row4 = new RightRow(3000, 9, 500)
   const row5 = new LeftRow(1250, 8, 250)
   const row6 = new LeftRow(2500, 6, 500)
-  const row7 = new RightRow(2500, 5, 500)
-  const row8 = new RightRow(2500, 4, 500)
-  const row9 = new LeftRow(2500, 3, 500)
-  const row10 = new RightRow(2500, 2, 500)
+  const row7 = new RightRow(1500, 5, 250)
+  const row8 = new RightRow(4125, 4, 750)
+  const row9 = new LeftRow(5500, 3, 500)
+  const row10 = new RightRow(2000, 2, 250)
 
 
   const froggerRows = {
@@ -1153,14 +1144,7 @@ function init() {
     }
   }
 
-  class Car {
-    constructor(position, leng) {
-      this.position = position,
-      this.leng = leng
-    }
-  }
-
-  class Log {
+  class Item {
     constructor(position, leng) {
       this.position = position
       this.leng = leng
@@ -1196,16 +1180,16 @@ function init() {
   }
 
   function froggerItemPaint() {
-    froggerSquares.forEach(square => square.classList.remove('car1'))
-    froggerRows.carRows.forEach(row => row.items.forEach(car => froggerSquares[car.position].classList.add('car1')))
-  }
-
-  function froggerLogPaint() {
     froggerSquares.forEach(square => square.classList.remove('log'))
-    // froggerRows.logRows.forEach(row => row.items.forEach(log => froggerSquares[log.position].classList.add('log')))
+    froggerSquares.forEach(square => square.classList.remove('car1'))
     froggerRows.logRows.forEach(row => row.items.forEach(log => {
       log.positions.forEach(pos => {
         froggerSquares[pos].classList.add('log')
+      })
+    }))
+    froggerRows.carRows.forEach(row => row.items.forEach(car => {
+      car.positions.forEach(pos => {
+        froggerSquares[pos].classList.add('car1')
       })
     }))
   }
@@ -1215,25 +1199,44 @@ function init() {
     frogs.push(activeFrog)
   }
 
-  function createItem(row) {
-    row.items.push(new Car(row.startingPosition, 1))
+  function createItem3(row) {
+    const newItem = new Item(row.startingPosition, 3)
+    newItem.populatePositions(row)
+    newItem.trueToActive(row)
+    row.items.push(newItem)
     froggerItemPaint()
   }
 
-  function createLog(row) {
-    const newLog = new Log(row.startingPosition, 3)
-    newLog.populatePositions(row)
-    newLog.trueToActive(row)
-    row.items.push(newLog)
-    froggerLogPaint()
+  function createItem1(row) {
+    const newItem = new Item(row.startingPosition, 1)
+    newItem.populatePositions(row)
+    newItem.trueToActive(row)
+    row.items.push(newItem)
+    froggerItemPaint()
+  }
+
+  function createItem2(row) {
+    const newItem = new Item(row.startingPosition, 2)
+    newItem.populatePositions(row)
+    newItem.trueToActive(row)
+    row.items.push(newItem)
+    froggerItemPaint()
+  }
+  
+  function createItem4(row) {
+    const newItem = new Item(row.startingPosition, 4)
+    newItem.populatePositions(row)
+    newItem.trueToActive(row)
+    row.items.push(newItem)
+    froggerItemPaint()
   }
 
   function froggerMoveObject(row) {
     row.move()
     row.edgeCollision()
-    if (froggerCarCollisionCheck()) frogDead(), froggerPaint()
+    if (froggerCarCollisionCheck()) frogDead()
+    froggerPaint()
     froggerItemPaint()
-    froggerLogPaint()
   }
 
   // BOARD CREATION
@@ -1243,7 +1246,7 @@ function init() {
       for (let i = 0; i < froggerWidth; i++) {
         const square = document.createElement('div')
         square.classList.add('frogger_game_square')
-        square.innerHTML = i
+        // square.innerHTML = i
         froggerGameContainer.appendChild(square)
         froggerSquares.push(square)
       }
@@ -1287,7 +1290,7 @@ function init() {
   }
 
   function frogDead() {
-    activeFrog.position = froggerStartingPos
+    activeFrog.position = froggerStartingPos - (froggerWidth * 11)
     frogLives--
   }
 
@@ -1297,111 +1300,111 @@ function init() {
   // CARS
 
   function row1Timer() {
-    createItem(row1)
+    createItem1(row1)
     row1.moveId = setInterval(function() {
       froggerMoveObject(row1)
     }, row1.speed)
     row1.createId = setInterval(function() {
-      createItem(row1)
+      createItem1(row1)
     }, row1.time)
   }
   
   function row2Timer() {
-    createItem(row2)
+    createItem1(row2)
     row2.moveId = setInterval(function() {
       froggerMoveObject(row2)
     }, row2.speed)
     row2.createId = setInterval(function() {
-      createItem(row2)
+      createItem1(row2)
     }, row2.time)
   }
 
   function row3Timer() {
-    createItem(row3)
+    createItem1(row3)
     row3.moveId = setInterval(function() {
       froggerMoveObject(row3)
     }, row3.speed)
     row3.createId = setInterval(function() {
-      createItem(row3)
+      createItem1(row3)
     }, row3.time)
   }
 
   function row4Timer() {
-    createItem(row4)
-    row4.createId = setInterval(function() {
-      createItem(row4)
-    }, row4.time)
+    createItem1(row4)
     row4.moveId = setInterval(function() {
       froggerMoveObject(row4)
     }, row4.speed)
+    row4.createId = setInterval(function() {
+      createItem1(row4)
+    }, row4.time)
   }
 
   function row5Timer() {
-    createItem(row5)
+    createItem1(row5)
     row5.moveId = setInterval(function() {
       froggerMoveObject(row5)
     }, row5.speed)
     row5.createId = setInterval(function() {
-      createItem(row5)
+      createItem1(row5)
     }, row5.time)
   }
 
   // LOGS
 
   function row6Timer() {
-    createLog(row6)
+    createItem3(row6)
     row6.moveId = setInterval(function() {
       froggerMoveObject(row6)
     }, row6.speed)
     row6.createId = setInterval(function() {
-      createLog(row6)
+      createItem3(row6)
     }, row6.time)
   }
 
   function row7Timer() {
-    createLog(row7)
+    createItem2(row7)
     row7.moveId = setInterval(function() {
       froggerMoveObject(row7)
     }, row7.speed)
     row7.createId = setInterval(function() {
-      createLog(row7)
+      createItem2(row7)
     }, row7.time)
   }
 
   function row8Timer() {
-    createLog(row8)
+    createItem3(row8)
     row8.moveId = setInterval(function() {
       froggerMoveObject(row8)
     }, row8.speed)
     row8.createId = setInterval(function() {
-      createLog(row8)
+      createItem3(row8)
     }, row8.time)
   }
 
   function row9Timer() {
-    createLog(row9)
+    createItem4(row9)
     row9.moveId = setInterval(function() {
       froggerMoveObject(row9)
     }, row9.speed)
     row9.createId = setInterval(function() {
-      createLog(row9)
+      createItem4(row9)
     }, row9.time)
   }
 
   function row10Timer() {
-    createLog(row10)
+    createItem3(row10)
     row10.moveId = setInterval(function() {
       froggerMoveObject(row10)
     }, row10.speed)
     row10.createId = setInterval(function() {
-      createLog(row10)
+      createItem3(row10)
     }, row10.time)
   }
 
   // COLLISION CHECKERS
 
   function froggerCarCollisionCheck() {
-    return froggerRows.carRows.some(row => row.items.some(car => car.position === activeFrog.position))
+    return froggerRows.carRows.some(row => row.items.some(car => car.positions.includes(activeFrog.position)))
   }
 
   function froggerBottomCheck() {
@@ -1412,6 +1415,10 @@ function init() {
     if (waterArray.some(square => froggerSquares.indexOf(square) === activeFrog.position)) {
       frogDead()
     }
+  }
+
+  function froggerLogCheck() {
+    if (!froggerRows.logRows.some(row => row.items.some(log => log.positions.includes(activeFrog.position)))) froggerWaterCheck()
   }
 
   function froggerTopCheck() {
@@ -1426,12 +1433,39 @@ function init() {
     return activeFrog.position % froggerWidth === 0
   }
 
+  function winCheck() {
+    if (lilyPadArray.some(lilypad => froggerSquares.indexOf(lilypad) === activeFrog.position)) {
+      if (froggerWinSet.has(activeFrog.position)) {
+        activeFrog.position += (froggerWidth)
+      } else {
+        froggerWinSet.add(activeFrog.position)
+        froggerSquares[activeFrog.position].classList.add('frog_win')
+        activeFrog.active = false
+        console.log(froggerWinSet.size)
+        for (let i = 0; i < froggerWinSet.size; i++) {
+          froggerSaved[i].classList.add('frogger_point_saved')
+          console.log('works')
+        }
+        if (froggerWinSet.size === 5) {
+          winfunction
+        } else {
+          createFrog()
+        }
+      }
+    }
+  }
+
+  function winFunction() {
+
+  }
+
   function froggerMove() {
     if (!froggerPlaying) return 
     switch (event.key) {
       case 'ArrowUp':
         if (froggerTopCheck()) return
         activeFrog.position -= (froggerWidth)
+        winCheck()
         break
       case 'ArrowDown':
         if (froggerBottomCheck()) return
@@ -1446,7 +1480,7 @@ function init() {
         activeFrog.position += 1
         break
     }
-    froggerWaterCheck()
+    froggerLogCheck()
     froggerPaint()
   }
 
@@ -1466,18 +1500,17 @@ function init() {
     selectorContainer.style.display = 'none'
     frogger.style.display = 'flex'
     back.style.display = 'block'
-    // row1Timer()
+    row1Timer()
     row2Timer()
-    // row3Timer()
-    // row4Timer()
-    // row5Timer()
-    // row6Timer()
-    // row7Timer()
-    // row8Timer()
-    // row9Timer()
-    // row10Timer()
+    row3Timer()
+    row4Timer()
+    row5Timer()
+    row6Timer()
+    row7Timer()
+    row8Timer()
+    row9Timer()
+    row10Timer()
   }
-  console.log(froggerSquares[row7.startingPosition])
 
   // EVENT LISTENERS
 

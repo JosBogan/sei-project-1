@@ -316,7 +316,7 @@ h2 {
  }
 
  .frogger_pad {
-   background: green;
+   background: lightgreen;
  }
 
  .frogger_road {
@@ -327,14 +327,35 @@ h2 {
    background: aqua;
  }
 
- .frog {
-   background: greenyellow;
- }
-
  .car1 {
    background: black;
  }
 
  .log {
-   background: brown;
- }
+  background: brown;
+}
+
+.frog {
+ background: greenyellow;
+}
+
+.frog_win {
+ background: darkgreen;
+}
+
+.frogger_point_container {
+ display: flex;
+ justify-content: space-evenly;
+}
+
+.frogger_life, .frogger_safe {
+ height: 20px;
+ width: 20px;
+ border-radius: 50%;
+ background: rgb(200, 190, 209);
+ border: 1px solid rgb(129, 106, 148);
+}
+
+.frogger_point_saved {
+ background: rgb(126, 98, 151);
+}
