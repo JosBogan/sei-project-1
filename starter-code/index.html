@@ -21,6 +21,7 @@
           <h2>FL Tron</h2>
         </div>
         <div class="frogger_selector selector">
+          <img src="assets/black_lily_pad.svg" alt="Frogger">
           <h2>Frogger</h2>
         </div>
       </div>
@@ -97,14 +98,14 @@
           <button class="start" id="frogger_start">Play</button>
           <div>
             <h2>Timer</h2>
-            <div>3:00</div>
+            <div class="frogger_time"><span id="frogger_mins">3</span>:<span id="frogger_secs">00</span></div>
           </div>
           <div>
             <h2>Lives</h2>
             <div class="frogger_point_container">
-              <div class="frogger_life"></div>
-              <div class="frogger_life"></div>
-              <div class="frogger_life"></div>
+              <div class="frogger_life frogger_point_fill"></div>
+              <div class="frogger_life frogger_point_fill"></div>
+              <div class="frogger_life frogger_point_fill"></div>
             </div>
           </div>
           <div>
@@ -119,6 +120,7 @@
           </div>
         </div>
         <div class="inner_game_container frogger_game_container">
+          <div class="message_text" id="frogger_message">Out of Lives</div>
         </div>
       </div>
     </div>

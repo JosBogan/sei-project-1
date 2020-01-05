@@ -1034,8 +1034,11 @@ function init() {
   const frogger = document.querySelector('#frogger')
   const froggerGameContainer = document.querySelector('.frogger_game_container')
   const froggerStart = document.querySelector('#frogger_start')
-  const froggerLives = document.querySelectorAll('.frogger_life')
+  const froggerLifePoints = document.querySelectorAll('.frogger_life')
   const froggerSaved = document.querySelectorAll('.frogger_safe')
+  const froggerDOMSecs = document.querySelector('#frogger_secs')
+  const froggerDOMMins = document.querySelector('#frogger_mins')
+  const froggerMessage = document.querySelector('#frogger_message')
 
   // VARIABLES
 
@@ -1047,7 +1050,10 @@ function init() {
   const frogs = []
   let activeFrog = null
   const froggerStartingPos = Math.floor((froggerWidth * froggerHeight) - (froggerWidth / 2))
-  let frogLives = 3
+  let froggerLives = 3
+  let froggerGameTimerId = null
+  let froggerMins = 3
+  let froggerSeconds = 0
 
   const froggerWinSet = new Set([])
 
@@ -1076,13 +1082,13 @@ function init() {
       })
     }
     move() {
+      if (this.items.some(item => item.positions.includes(activeFrog.position)) && froggerRows.logRows.includes(this)) activeFrog.position++
       this.items.forEach(item => {
         for (let i = 0; i < item.truePositions.length; i++) {
           item.truePositions[i]++
         }
         item.trueToActive(this)
       })
-      if (this.items.some(item => item.positions.includes(activeFrog.position)) && froggerRows.logRows.includes(this)) activeFrog.position++
     }
   }
 
@@ -1101,13 +1107,13 @@ function init() {
       })
     }
     move() {
+      if (this.items.some(item => item.positions.includes(activeFrog.position)) && froggerRows.logRows.includes(this)) activeFrog.position--
       this.items.forEach(item => {
         for (let i = 0; i < item.truePositions.length; i++) {
           item.truePositions[i]--
         }
         item.trueToActive(this)
       })
-      if (this.items.some(item => item.positions.includes(activeFrog.position)) && froggerRows.logRows.includes(this)) activeFrog.position--
     }
   }
 
@@ -1246,7 +1252,6 @@ function init() {
       for (let i = 0; i < froggerWidth; i++) {
         const square = document.createElement('div')
         square.classList.add('frogger_game_square')
-        // square.innerHTML = i
         froggerGameContainer.appendChild(square)
         froggerSquares.push(square)
       }
@@ -1290,8 +1295,15 @@ function init() {
   }
 
   function frogDead() {
-    activeFrog.position = froggerStartingPos - (froggerWidth * 11)
-    frogLives--
+    activeFrog.position = froggerStartingPos
+    froggerLives--
+    for (let i = 0; i < Math.abs(froggerLives - 3); i++) {
+      froggerLifePoints[i].classList.remove('frogger_point_fill')
+    }
+    if (froggerLives === 0) {
+      froggerMessage.innerHTML = 'Out of Lives'
+      froggerLoseFunc()
+    }
   }
 
 
@@ -1401,6 +1413,24 @@ function init() {
     }, row10.time)
   }
 
+  function froggerClockTick() {
+    switch (froggerSeconds) {
+      case 0:
+        froggerSeconds = 59
+        froggerMins--
+        break
+      default:
+        froggerSeconds--
+    }
+    froggerDOMMins.innerHTML = froggerMins
+    froggerSeconds === 0 ? froggerDOMSecs.innerHTML = '00' : froggerDOMSecs.innerHTML = froggerSeconds
+    if (froggerSeconds < 10) froggerDOMSecs.innerHTML = '0' + froggerSeconds
+    if (froggerSeconds === 0 && froggerMins === 0) {
+      froggerMessage.innerHTML = 'Out of Time'
+      froggerLoseFunc()
+    }
+  }
+
   // COLLISION CHECKERS
 
   function froggerCarCollisionCheck() {
@@ -1443,11 +1473,11 @@ function init() {
         activeFrog.active = false
         console.log(froggerWinSet.size)
         for (let i = 0; i < froggerWinSet.size; i++) {
-          froggerSaved[i].classList.add('frogger_point_saved')
+          froggerSaved[i].classList.add('frogger_point_fill')
           console.log('works')
         }
         if (froggerWinSet.size === 5) {
-          winfunction
+          froggerWinFunction()
         } else {
           createFrog()
         }
@@ -1455,8 +1485,44 @@ function init() {
     }
   }
 
-  function winFunction() {
+  function froggerWinFunction() {
+    froggerMessage.innerHTML = 'YOU WIN!'
+    froggerMessageDisplay()
+  }
 
+  function froggerLoseFunc() {
+    froggerClearTimers()
+    froggerMessageDisplay()
+    froggerPlaying = false
+    froggerSeconds = 0
+    froggerMins = 3
+  }
+
+  function froggerMessageDisplay() {
+    froggerMessage.style.display = 'block'
+  }
+
+  function froggerMessageHide() {
+    froggerMessage.style.display = 'none'
+  }
+
+  function froggerClearTimers() {
+    froggerRows.all.forEach(row => {
+      clearInterval(row.createId)
+      clearInterval(row.moveId)
+    })
+    clearInterval(froggerGameTimerId)
+  }
+
+  function froggerClearBoard() {
+    froggerRows.all.forEach(row => row.items = [])
+    froggerItemPaint()
+  }
+
+  function froggerHardReset() {
+    froggerClearTimers()
+    froggerClearBoard()
+    froggerPlaying = false
   }
 
   function froggerMove() {
@@ -1486,6 +1552,7 @@ function init() {
 
   function froggerStartFunc() {
     froggerPlaying = true
+    froggerGameTimerId = setInterval(froggerClockTick, 1000)
   }
 
   froggerGridCreate()
@@ -1524,6 +1591,7 @@ function init() {
 
   function returnToMain() {
     resetFunc()
+    froggerHardReset()
     tetrisDomPause.style.display = 'none'
     selectorContainer.style.display = 'flex'
     tetris.style.display = 'none'

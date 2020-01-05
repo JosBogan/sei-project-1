@@ -116,7 +116,7 @@
   background: #cadefc;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-evenly;
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
   border: 1px solid rgb(129, 106, 148);
@@ -308,19 +308,19 @@ h2 {
  .frogger_game_square {
    height: 40px;
    width: 40px;
-   border: 1px solid black;
  }
 
  .frogger_pavement {
-   background: red;
+   background-image: url('../assets/pavement_tile.svg');
  }
 
  .frogger_pad {
-   background: lightgreen;
+   background: aqua;
+   background-image: url('../assets/LilyPad.svg');
  }
 
  .frogger_road {
-   background: gray;
+   background-image: url('../assets/road_tile.svg');
  }
 
  .frogger_water {
@@ -328,7 +328,21 @@ h2 {
  }
 
  .car1 {
-   background: black;
+   background: 
+      url('../assets/car1right.png'), 
+      url('../assets/road_tile.svg');
+   background-repeat: no-repeat;
+   background-position: center;
+   background-size: contain;
+ }
+
+ .car2 {
+  background:
+      url('../assets/car1left.png'), 
+      url('../assets/road_tile.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
  }
 
  .log {
@@ -336,7 +350,8 @@ h2 {
 }
 
 .frog {
- background: greenyellow;
+ /* background: greenyellow; */
+ background: url('../assets/frog.svg');
 }
 
 .frog_win {
@@ -352,10 +367,13 @@ h2 {
  height: 20px;
  width: 20px;
  border-radius: 50%;
- background: rgb(200, 190, 209);
  border: 1px solid rgb(129, 106, 148);
 }
 
-.frogger_point_saved {
- background: rgb(126, 98, 151);
+.frogger_point_fill {
+ background: rgb(189, 146, 226);
+}
+
+.frogger_time > * {
+   font-size: 2em;
 }
