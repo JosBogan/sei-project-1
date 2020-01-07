@@ -133,6 +133,7 @@
   padding: 10px 20px;
   display: none;
   border-radius: 5px;
+  z-index: 1;
 }
 
 h2 {
@@ -332,7 +333,6 @@ h2 {
  .frogger_water {
    background: url('../assets/Water.svg');
  }
-
  .car1 {
    background: 
       url('../assets/car1right.png'), 
@@ -352,13 +352,37 @@ h2 {
  }
 
  .log {
-  background: brown;
+  background: 
+    url('../assets/log1.svg'),
+    url('../assets/Water.svg');
+}
+
+.log_l {
+  background: 
+  url('../assets/log_l.svg'),
+  url('../assets/Water.svg');
+  position: relative;
+}
+
+.log_middle {
+  background: 
+  url('../assets/log_middle.svg'),
+  url('../assets/Water.svg');
+  position: relative;
+}
+
+.log_r {
+  background: 
+  url('../assets/log_r.svg'),
+  url('../assets/Water.svg');
+  position: relative;
 }
 
 .frog {
- background: 
-    url('../assets/frog.svg'),
+  background: 
+    url('../assets/frog.svg') center/50%,
     var(--frog_bg);
+  background-repeat: no-repeat;
 }
 
 .frog_win {
@@ -387,5 +411,319 @@ h2 {
 }
 
 .frogger_time > * {
-   font-size: 2em;
+  font-size: 2em;
+}
+
+.car_move_row_1::before {
+  content: '';
+  background: url('../assets/car1left.png');
+  background-size: 100% 100%;
+  width: inherit;
+  height: inherit;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: inline-block;
+  position: relative;
+  animation: car_left 0.5s linear infinite;
+}
+
+.car_move_row_2::before {
+  content: '';
+  background: url('../assets/car1right.png');
+  background-size: 100% 100%;
+  width: inherit;
+  height: inherit;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: inline-block;
+  position: relative;
+  animation: car_right 0.75s linear infinite;
+}
+
+.car_move_row_3::before {
+  content: '';
+  background: url('../assets/car1left.png');
+  background-size: 100% 100%;
+  width: inherit;
+  height: inherit;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: inline-block;
+  position: relative;
+  animation: car_left 0.5s linear infinite;
+}
+
+.car_move_row_4::before {
+  content: '';
+  background: url('../assets/car1right.png');
+  background-size: 100% 100%;
+  width: inherit;
+  height: inherit;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: inline-block;
+  position: relative;
+  animation: car_right 0.5s linear infinite;
+}
+
+.car_move_row_5::before {
+  content: '';
+  background: url('../assets/car1left.png');
+  background-size: 100% 100%;
+  width: inherit;
+  height: inherit;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: inline-block;
+  position: relative;
+  animation: car_left 0.25s linear infinite;
+}
+
+.log_move_row_6_left::before {
+  content: '';
+  background: url('../assets/log_r.svg');
+  background-size: 100% 100%;
+  width: inherit;
+  height: inherit;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: inline-block;
+  position: relative;
+  animation: car_left 0.5s linear infinite;
+}
+
+.log_move_row_6_right::before {
+  content: '';
+  background: url('../assets/log_l.svg');
+  background-size: 100% 100%;
+  width: inherit;
+  height: inherit;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: inline-block;
+  position: relative;
+  animation: car_left 0.5s linear infinite;
+}
+
+.log_move_row_6_middle::before {
+  content: '';
+  background: url('../assets/log_middle.svg');
+  background-size: 100% 100%;
+  width: inherit;
+  height: inherit;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: inline-block;
+  position: relative;
+  animation: car_left 0.5s linear infinite;
+}
+
+.log_move_row_7_left::before {
+  content: '';
+  background: url('../assets/log_r.svg');
+  background-size: 100% 100%;
+  width: inherit;
+  height: inherit;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: inline-block;
+  position: relative;
+  animation: car_right 0.25s linear infinite;
+}
+
+.log_move_row_7_right::before {
+  content: '';
+  background: url('../assets/log_l.svg');
+  background-size: 100% 100%;
+  width: inherit;
+  height: inherit;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: inline-block;
+  position: relative;
+  animation: car_right 0.25s linear infinite;
+}
+
+.log_move_row_7_middle::before {
+  content: '';
+  background: url('../assets/log_middle.svg');
+  background-size: 100% 100%;
+  width: inherit;
+  height: inherit;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: inline-block;
+  position: relative;
+  animation: car_right 0.25s linear infinite;
+}
+
+.log_move_row_8_left::before {
+  content: '';
+  background: url('../assets/log_r.svg');
+  background-size: 100% 100%;
+  width: inherit;
+  height: inherit;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: inline-block;
+  position: relative;
+  animation: car_right 0.75s linear infinite;
+}
+
+.log_move_row_8_right::before {
+  content: '';
+  background: url('../assets/log_l.svg');
+  background-size: 100% 100%;
+  width: inherit;
+  height: inherit;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: inline-block;
+  position: relative;
+  animation: car_right 0.75s linear infinite;
+}
+
+.log_move_row_8_middle::before {
+  content: '';
+  background: url('../assets/log_middle.svg');
+  background-size: 100% 100%;
+  width: inherit;
+  height: inherit;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: inline-block;
+  position: relative;
+  animation: car_right 0.75s linear infinite;
+}
+
+.log_move_row_9_left::before {
+  content: '';
+  background: url('../assets/log_r.svg');
+  background-size: 100% 100%;
+  width: inherit;
+  height: inherit;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: inline-block;
+  position: relative;
+  animation: car_left 0.5s linear infinite;
+}
+
+
+.log_move_row_9_right::before {
+  content: '';
+  background: url('../assets/log_l.svg');
+  background-size: 100% 100%;
+  width: inherit;
+  height: inherit;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: inline-block;
+  position: relative;
+  animation: car_left 0.5s linear infinite;
+}
+
+
+.log_move_row_9_middle::before {
+  content: '';
+  background: url('../assets/log_middle.svg');
+  background-size: 100% 100%;
+  width: inherit;
+  height: inherit;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: inline-block;
+  position: relative;
+  animation: car_left 0.5s linear infinite;
+}
+
+.log_move_row_10_left::before {
+  content: '';
+  background: url('../assets/log_r.svg');
+  background-size: 100% 100%;
+  width: inherit;
+  height: inherit;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: inline-block;
+  position: relative;
+  animation: car_right 0.25s linear infinite;
+}
+
+.log_move_row_10_right::before {
+  content: '';
+  background: url('../assets/log_l.svg');
+  background-size: 100% 100%;
+  width: inherit;
+  height: inherit;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: inline-block;
+  position: relative;
+  animation: car_right 0.25s linear infinite;
+}
+
+.log_move_row_10_middle::before {
+  content: '';
+  background: url('../assets/log_middle.svg');
+  background-size: 100% 100%;
+  width: inherit;
+  height: inherit;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: inline-block;
+  position: relative;
+  animation: car_right 0.25s linear infinite;
+}
+
+@keyframes car_left {
+  0% {right: -20px;}
+  100% {right: 20px;}
+}
+
+@keyframes car_right {
+  0% {left: -20px;}
+  100% {left: 20px;}
+}
+
+@keyframes log_left {
+  0% {background-position: 
+    20px 0px,
+    0px 0px;
+  }
+  100% {background-position: 
+    -20px 0px,
+    0px 0px;
+  }
+}
+
+@keyframes log_right {
+  0% {background-position: 
+    20px 0%, 
+    0% 0%;
+  }
+  100% {background-position: 
+    -50% 0%, 
+    0% 0%;
+  }
 }

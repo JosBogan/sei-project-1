@@ -774,6 +774,7 @@ function init() {
         flP1.direction = flP1.directions[0]
         break
     }
+    flPaint()
   }
 
   function flKeyDown2() {
@@ -796,6 +797,7 @@ function init() {
         flP2.direction = flP2.directions[0]
         break
     }
+    flPaint()
   }
 
   function flKeyDown3() {
@@ -819,6 +821,7 @@ function init() {
         flP3.direction = flP3.directions[0]
         break
     }
+    flPaint()
   }
 
   function flKeyDown4() {
@@ -842,6 +845,7 @@ function init() {
         flP4.direction = flP4.directions[0]
         break
     }
+    flPaint()
   }
 
   function tick() {
@@ -1082,13 +1086,20 @@ function init() {
       })
     }
     move() {
-      if (this.items.some(item => item.positions.includes(activeFrog.position)) && froggerRows.logRows.includes(this)) activeFrog.position++
+      if (
+        this.items.some(item => item.positions.includes(activeFrog.position)) &&
+        froggerRows.logRows.includes(this) &&
+        activeFrog.position !== this.endingPosition
+      ) {
+        activeFrog.position++
+      }
       this.items.forEach(item => {
         for (let i = 0; i < item.truePositions.length; i++) {
           item.truePositions[i]++
         }
         item.trueToActive(this)
       })
+      froggerLogCheck()
     }
   }
 
@@ -1107,19 +1118,26 @@ function init() {
       })
     }
     move() {
-      if (this.items.some(item => item.positions.includes(activeFrog.position)) && froggerRows.logRows.includes(this)) activeFrog.position--
+      if (
+        this.items.some(item => item.positions.includes(activeFrog.position)) && 
+        froggerRows.logRows.includes(this) &&
+        activeFrog.position !== this.endingPosition
+      ) {
+        activeFrog.position--
+      }
       this.items.forEach(item => {
         for (let i = 0; i < item.truePositions.length; i++) {
           item.truePositions[i]--
         }
         item.trueToActive(this)
       })
+      froggerLogCheck()
     }
   }
 
   const row1 = new LeftRow(2500, 12, 500)
   const row2 = new RightRow(2250, 11, 750)
-  const row3 = new LeftRow(2250, 10, 500)
+  const row3 = new LeftRow(2000, 10, 500)
   const row4 = new RightRow(3000, 9, 500)
   const row5 = new LeftRow(1250, 8, 250)
   const row6 = new LeftRow(2500, 6, 500)
@@ -1181,36 +1199,91 @@ function init() {
   // FUNCTIONS
 
   function froggerPaint() {
+    froggerItemPaint()
     froggerSquares.forEach(square => square.classList.remove('frog'))
     if (pavementArray.includes(froggerSquares[activeFrog.position])) {
       document.documentElement.style.setProperty('--frog_bg', 'url("../assets/pavement_tile.svg")')
     } else if (roadArray.includes(froggerSquares[activeFrog.position])) {
       document.documentElement.style.setProperty('--frog_bg', 'url("../assets/road_tile.svg")')
     } else if (froggerRows.logRows.some(row => row.items.some(item => item.positions.includes(activeFrog.position)))) {
-      // document.documentElement.style.setProperty('--frog_bg', 'url("../assets/log_tile.svg")')
+      if (froggerSquares[activeFrog.position].classList.contains('log_r')) {
+        document.documentElement.style.setProperty('--frog_bg', 'url("../assets/log_r.svg"), url("../assets/Water.svg") ')
+      } else if (froggerSquares[activeFrog.position].classList.contains('log_l')) {
+        document.documentElement.style.setProperty('--frog_bg', 'url("../assets/log_l.svg"), url("../assets/Water.svg") ')
+      } else if (froggerSquares[activeFrog.position].classList.contains('log_middle')) {
+        document.documentElement.style.setProperty('--frog_bg', 'url("../assets/log_middle.svg"), url("../assets/Water.svg") ')
+      }
     }
     froggerSquares[activeFrog.position].classList.add('frog')
   }
 
   function froggerItemPaint() {
-    froggerSquares.forEach(square => square.classList.remove('log'))
-    froggerSquares.forEach(square => square.classList.remove('car1'))
-    froggerSquares.forEach(square => square.classList.remove('car2'))
+    froggerSquares.forEach(square => square.classList.remove('log', 'log_r', 'log_l', 'log_middle', 'log_move_row_7_left', 'log_move_row_7_right'))
+    froggerSquares.forEach(square => square.classList.remove('car1', 'car2', 'car_move_row_2', 'car_move_row_1', 'car_move_row_3', 'car_move_row_4', 'car_move_row_5'))
     froggerRows.logRows.forEach(row => row.items.forEach(log => {
       log.positions.forEach(pos => {
-        froggerSquares[pos].classList.add('log')
+        if (log.truePositions.length === 2) {
+          if (froggerRows.right.includes(row)) {
+            if (log.truePositions[0] === pos) {
+              froggerSquares[pos].classList.add('log_r')
+              // froggerSquares[pos].classList.add('log_move_row_7_left')
+            } else if (log.truePositions[1] === pos) {
+              froggerSquares[pos].classList.add('log_l')
+              // froggerSquares[pos].classList.add('log_move_row_7_right')
+            }
+          } else if (froggerRows.left.includes(row)) {
+            if (log.truePositions[0] === pos) {
+              froggerSquares[pos].classList.add('log_l')
+            } else if (log.truePositions[1] === pos) {
+              froggerSquares[pos].classList.add('log_r')
+            }
+          }
+        } else {
+          if (froggerRows.right.includes(row)) {
+            froggerSquares[pos].classList.add('log_middle')
+            if (log.truePositions[0] === pos) {
+              froggerSquares[pos].classList.remove('log_middle')
+              froggerSquares[pos].classList.add('log_r')
+            } else if (log.truePositions[log.truePositions.length - 1] === pos) {
+              froggerSquares[pos].classList.remove('log_middle')
+              froggerSquares[pos].classList.add('log_l')
+              
+            }
+          } else if (froggerRows.left.includes(row)) {
+            froggerSquares[pos].classList.add('log_middle')
+            if (log.truePositions[0] === pos) {
+              froggerSquares[pos].classList.remove('log_middle')
+              froggerSquares[pos].classList.add('log_l')
+            } else if (log.truePositions[log.truePositions.length - 1] === pos) {
+              froggerSquares[pos].classList.remove('log_middle')
+              froggerSquares[pos].classList.add('log_r')
+            }
+          }
+        }
       })
     }))
-    froggerRows.carRows.filter(carRow => froggerRows.right.includes(carRow)).forEach(row => row.items.forEach(car => {
-      car.positions.forEach(pos => {
-        froggerSquares[pos].classList.add('car1')
-      })
-    }))
-    froggerRows.carRows.filter(carRow => froggerRows.left.includes(carRow)).forEach(row => row.items.forEach(car => {
-      car.positions.forEach(pos => {
-        froggerSquares[pos].classList.add('car2')
-      })
-    }))
+    // froggerRows.logRows.forEach(row => row.items.forEach(item => item.positions.forEach(pos => froggerSquares[pos].style.animation = '')))
+    // row6.items.forEach(log => log.positions.forEach(pos => {
+    //   froggerSquares[pos].style.animation = 'log_left 0.5s linear infinite'
+    // }))
+    // row7.items.forEach(log => log.positions.forEach(pos => {
+    //   froggerSquares[pos].style.animation = 'car_right 0.25s linear infinite'
+    // }))
+    row1.items.forEach(car => car.positions.forEach(pos => froggerSquares[pos].classList.add('car_move_row_1')))
+    row2.items.forEach(car => car.positions.forEach(pos => froggerSquares[pos].classList.add('car_move_row_2')))
+    row3.items.forEach(car => car.positions.forEach(pos => froggerSquares[pos].classList.add('car_move_row_3')))
+    row4.items.forEach(car => car.positions.forEach(pos => froggerSquares[pos].classList.add('car_move_row_4')))
+    row5.items.forEach(car => car.positions.forEach(pos => froggerSquares[pos].classList.add('car_move_row_5')))
+    // froggerRows.carRows.filter(carRow => froggerRows.right.includes(carRow)).forEach(row => row.items.forEach(car => {
+    //   car.positions.forEach(pos => {
+    //     froggerSquares[pos].classList.add('car1')
+    //   })
+    // }))
+    // froggerRows.carRows.filter(carRow => froggerRows.left.includes(carRow)).forEach(row => row.items.forEach(car => {
+    //   car.positions.forEach(pos => {
+    //     froggerSquares[pos].classList.add('car2')
+    //   })
+    // }))
   }
 
   function createFrog() {
@@ -1228,6 +1301,9 @@ function init() {
 
   function createItem1(row) {
     const newItem = new Item(row.startingPosition, 1)
+    const newCar = document.createElement('div')
+    newCar.classList.add('car_test')
+    froggerGameContainer.insertBefore(newCar, froggerSquares[row.startingPosition])
     newItem.populatePositions(row)
     newItem.trueToActive(row)
     row.items.push(newItem)
@@ -1315,6 +1391,7 @@ function init() {
     }
     if (froggerLives === 0) {
       froggerMessage.innerHTML = 'Out of Lives'
+      froggerSquares.forEach(square => square.style.animation = '')
       froggerLoseFunc()
     }
   }
@@ -1440,6 +1517,7 @@ function init() {
     if (froggerSeconds < 10) froggerDOMSecs.innerHTML = '0' + froggerSeconds
     if (froggerSeconds === 0 && froggerMins === 0) {
       froggerMessage.innerHTML = 'Out of Time'
+      froggerSquares.forEach(square => square.style.animation = '')
       froggerLoseFunc()
     }
   }
@@ -1484,10 +1562,8 @@ function init() {
         froggerWinSet.add(activeFrog.position)
         froggerSquares[activeFrog.position].classList.add('frog_win')
         activeFrog.active = false
-        console.log(froggerWinSet.size)
         for (let i = 0; i < froggerWinSet.size; i++) {
           froggerSaved[i].classList.add('frogger_point_fill')
-          console.log('works')
         }
         if (froggerWinSet.size === 5) {
           froggerWinFunction()
@@ -1499,8 +1575,12 @@ function init() {
   }
 
   function froggerWinFunction() {
+    froggerClearTimers()
+    activeFrog.position = froggerStartingPos
     froggerMessage.innerHTML = 'YOU WIN!'
     froggerMessageDisplay()
+    froggerPlaying = false
+    froggerStart.innerHTML = 'Reset'
   }
 
   function froggerLoseFunc() {
