@@ -5,6 +5,7 @@
     <script src="scripts/app.js"></script>
     <script src="https://kit.fontawesome.com/494369d355.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css?family=Poppins&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/main.css">
     <title>WDI Project 1</title>
   </head>
@@ -93,36 +94,35 @@
           </div>
         </div>
       </div>
-      <div class="outer_game_container" id="frogger">
-        <div class="side_bar frogger_side_bar">
-          <button class="start" id="frogger_start">Play</button>
-          <div>
-            <h2>Timer</h2>
-            <div class="frogger_time"><span id="frogger_mins">3</span>:<span id="frogger_secs">00</span></div>
+      <div class="outer_game_container frogger_outer_container" id="frogger">
+        <div class="frogger_top_bar">
+          <div class="frogger_up_1_container">
+            <h2>1-UP</h2>
+            <div>000000</div>
           </div>
-          <div>
-            <h2>Lives</h2>
-            <div class="frogger_point_container">
-              <div class="frogger_life frogger_point_fill"></div>
-              <div class="frogger_life frogger_point_fill"></div>
-              <div class="frogger_life frogger_point_fill"></div>
-            </div>
-          </div>
-          <div>
-            <h2>Safe Frogs</h2>
-            <div class="frogger_point_container">
-              <div class="frogger_safe"></div>
-              <div class="frogger_safe"></div>
-              <div class="frogger_safe"></div>
-              <div class="frogger_safe"></div>
-              <div class="frogger_safe"></div>
-            </div>
+          <div class="frogger_score_container">
+            <h2>SCORE</h2>
+            <div>000000</div>
           </div>
         </div>
-        <div class="inner_game_container frogger_game_container">
-          <div class="message_text" id="frogger_message">Out of Lives</div>
+      <div class="inner_game_container frogger_game_container">
+        <div class="frogger_start_text">PRESS ANY KEY TO START</div>
+        <div class="message_text frogger_message_text" id="frogger_message">GAME OVER <br /> CONTINUE?
+        <div class="frogger_buttons"><button id="frogger_yes">Y</button><button class="frogger_no">N</button></div>
+      </div>
+      </div>
+      <div class="frogger_bottom_bar">
+        <div class="frogger_point_container">
+          <div class="frogger_life"></div>
+          <div class="frogger_life"></div>
+          <div class="frogger_life"></div>
+        </div>
+        <div class="frogger_time_container">
+          <div class="frogger_timer"></div>
+          <h2 class="frogger_time">TIME</h2>
         </div>
       </div>
+    </div>
     </div>
   </body>
 </html>
