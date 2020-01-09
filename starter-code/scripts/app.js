@@ -4,6 +4,11 @@ function init() {
 
   const selectorContainer = document.querySelector('.selector_container')
   const back = document.querySelector('.back')
+  const pageContainer = document.querySelector('.page_container')
+  const controls = document.querySelector('.controls')
+  const tetrisControls = document.querySelector('.tetris_controls')
+  const flTronControls = document.querySelector('.fl_tron_controls')
+  const froggerControls = document.querySelector('.frogger_controls')
 
   // Variables
 
@@ -601,6 +606,8 @@ function init() {
     selectorContainer.style.display = 'none'
     tetris.style.display = 'flex'
     back.style.display = 'block'
+    controls.style.display = 'block'
+    tetrisControls.style.display = 'block'
   }
 
   nextGridCreate()
@@ -1007,6 +1014,8 @@ function init() {
     selectorContainer.style.display = 'none'
     flTron.style.display = 'flex'
     back.style.display = 'block'
+    controls.style.display = 'block'
+    flTronControls.style.display = 'block'
   }
 
   createPlayer1(1)
@@ -1036,6 +1045,7 @@ function init() {
 
   const frogger = document.querySelector('#frogger')
   const froggerGameContainer = document.querySelector('.frogger_game_container')
+  const froggerOuterContainer = document.querySelector('.frogger_outer_container')
   const froggerLifePoints = document.querySelectorAll('.frogger_life')
   const froggerMessage = document.querySelector('#frogger_message')
   const froggerDOMTimer = document.querySelector('.frogger_timer')
@@ -1043,6 +1053,7 @@ function init() {
   const froggerDOMScore = document.querySelector('.frogger_score_container > div')
   const froggerYes = document.querySelector('#frogger_yes')
   const froggerNo = document.querySelector('#frogger_no')
+  const froggerSelector = document.querySelector('.frogger_selector')
   const froggerStartText = document.querySelector('.frogger_start_text')
 
   // VARIABLES
@@ -1071,6 +1082,7 @@ function init() {
   class RowTraits {
     constructor(tickRate, row, spawnRate) {
       this.items = [],
+      this.row = row
       this.tickRate = tickRate,
       this.spawnRate = spawnRate,
       this.spawnRateNum = 1,
@@ -1196,30 +1208,45 @@ function init() {
     froggerSquares[activeFrog.position].classList.add('frog')
   }
 
-  function froggerBackgroundImageConstructor() {
+  function froggerBackgroundImageConstructor(row) {
     let bg = ''
-    for (let i = 0; i < row6.items[0].positions.length; i++) {
-      if (i === row6.items[0].positions.length - 1) {
-        bg += 'url("../assets/log_right.png")'
-      } else if (i === 0) {
-        bg += 'url("../assets/log_left.png"),'
-      } else {
-        bg += 'url("../assets/log_middle.png"),'
+    for (let i = 0; i < row.spawnRate.length; i++) {
+      for (let s = 0; s < row.items[0].positions.length; s++) {
+        if (i === row.items[0].positions.length - 1) {
+          bg += 'url("../assets/log_right.png")'
+        } else if (i === 0) {
+          bg += 'url("../assets/log_left.png"),'
+        } else {
+          bg += 'url("../assets/log_middle.png"),'
+        }
       }
     }
     return bg
   }
 
-  function froggerBackgroundPositionConstructor() {
+  function froggerBackgroundPositionConstructor(row) {
     let distance = '0 0,'
-    for (let i = 1; i < row6.items[0].positions.length; i++) {
-      if (i !== row6.items[0].positions.length - 1) {
+    for (let i = 1; i < row.items[0].positions.length; i++) {
+      if (i !== row.items[0].positions.length - 1) {
         distance += (i * 40 + 'px ' + 0 + ',')
       } else {
         distance += (i * 40 + 'px ' + 0)
       }
     }
     return distance
+  }
+
+  function froggerRowHeightConstructor(row) {
+    return `${(row.row - 1) * 40}px`
+  }
+
+  function froggerPseudoElementCreate(row) {
+    document.documentElement.style.setProperty('--row_7_bg_images', froggerBackgroundImageConstructor(row7))
+    document.documentElement.style.setProperty('--row_7_bg_pos', froggerBackgroundPositionConstructor(row7))
+    document.documentElement.style.setProperty('--row_7_height', froggerRowHeightConstructor(row7))
+    console.log(document.documentElement.style.getPropertyValue('--row_7_bg_images'))
+    document.documentElement.style.setProperty('--row_7_width', (row7.items[0].positions.length) * (row7.items.length))
+    froggerSquares[row.startingSquare - (froggerWidth * (row.row - 1)) + row7.items.length].classList.add('row_7_test')
   }
 
   function froggerItemPaint() {
@@ -1240,7 +1267,7 @@ function init() {
       'row_8_anim',
       'row_9_anim',
       'row_10_anim',
-      'row_5_test',
+      'row_5_test'
     ))
     row1.items.forEach(item => item.positions.forEach(pos => froggerSquares[pos].classList.add('row_1_car')))
     row2.items.forEach(item => item.positions.forEach(pos => froggerSquares[pos].classList.add('row_2_car')))
@@ -1329,6 +1356,10 @@ function init() {
     froggerDOMTimer.classList.remove('frogger_life_animation_class')
   }
 
+  function removeSafeFrogs() {
+    froggerSquares.forEach(square => square.classList.remove('safe_frog_right', 'safe_frog_left'))
+  }
+
   function froggerSafeCondition() {
     if (safeArray.includes(froggerSquares[activeFrog.position])) {
       if (activeFrog.position % 2 === 0) {
@@ -1345,9 +1376,8 @@ function init() {
       UpdateFroggerScore(50)
     }
     if (frogsSafe === 3) {
-      console.log('win!')
       UpdateFroggerScore(1000)
-      froggerSquares.forEach(square => square.classList.remove('safe_frog_right', 'safe_frog_left'))
+      setTimeout(removeSafeFrogs, 1000)
       frogsSafe = 0
     }
   }
@@ -1468,6 +1498,7 @@ function init() {
   function spawnRateContainer(row, length) {
     if (row.spawnRateNum === 0) {
       createItem(row, length)
+      // froggerPseudoElementCreate(row7)
       row.spawnRateNum++
       if (row.spawnNum === row.spawnRate.length - 1) {
         row.spawnNum = 0
@@ -1481,13 +1512,25 @@ function init() {
     }
   }
 
-  function clearTimers() {
+  function froggerHardReset() {
     froggerRows.all.forEach(row => {
-      clearInterval(row.timerId)
+      clearInterval(row.tickId)
+      row.items = []
     })
+    froggerSquares.forEach(square => square.classList.remove('safe_frog_right', 'safe_frog_left'))
+    froggerPaintFrog()
+    froggerItemPaint()
+    froggerStartText.style.display = 'block'
+    UpdateFroggerScore(-froggerScore)
+    frogLives = 3
+    frogsSafe = 0
+    froggerPlaying = false
+    froggerMessage.style.display = 'none'
+    froggerLifePoints.forEach(life => life.style.display = 'block')
+    froggerDOMTimer.classList.remove('frogger_life_animation_class')
   }
 
-  function level2Rows() {
+  function froggerLevel2Rows() {
 
   }
 
@@ -1551,7 +1594,7 @@ function init() {
   }
 
   function froggerStartTimers() {
-    if (froggerPlaying || froggerStartText.style.display === 'none') return
+    if (froggerPlaying || froggerStartText.style.display === 'none' || froggerOuterContainer.style.display === 'none') return
     froggerStartFunc()
     createItem(row1, 1)
     createItem(row2, 1)
@@ -1560,13 +1603,14 @@ function init() {
     createItem(row5, 2)
     createItem(row6, 3)
     createItem(row7, 3)
-    // froggerSquares[row7.startingSquare + 1].classList.add('row_7_test')
+    // froggerPseudoElementCreate(row7)
     createItem(row8, 6)
     createItem(row9, 2)
     createItem(row10, 4)
     row1.tickId = setInterval(function() {
       rowTimer(row1, 1)
     }, row1.tickRate)
+    console.log(row1.tickRate)
     row2.tickId = setInterval(function() {
       rowTimer(row2, 1)
     }, row2.tickRate)
@@ -1598,6 +1642,8 @@ function init() {
   }
 
   function froggerStartFunc() {
+    activeFrog = null
+    activeFrog = new Frog(froggerStartingPos, true)
     UpdateFroggerScore(-froggerScore)
     froggerSquares.forEach(square => square.classList.remove('safe_frog_right', 'safe_frog_left'))
     frogLives = 3
@@ -1607,6 +1653,16 @@ function init() {
     froggerMessage.style.display = 'none'
     froggerLifePoints.forEach(life => life.style.display = 'block')
     froggerDOMTimer.classList.add('frogger_life_animation_class')
+  }
+
+  function displayFrogger() {
+    froggerOuterContainer.style.display = 'flex'
+    selectorContainer.style.display = 'none'
+    pageContainer.style.background = 'black'
+    back.style.display = 'block'
+    controls.style.display = 'block'
+    controls.classList.add('frogger_style_controls')
+    froggerControls.style.display = 'block'
   }
 
   froggerGridCreate()
@@ -1624,22 +1680,45 @@ function init() {
   window.addEventListener('animationend', animEndFunc)
   froggerYes.addEventListener('click', froggerStartFunc)
   window.addEventListener('keydown', froggerStartTimers)
+  froggerSelector.addEventListener('click', displayFrogger)
 
 
   // FROGGER END
 
+  function controlsUnHover() {
+    console.log('out')
+    controls.style.animation = ''
+    controls.style.animation = 'controls_anim_2 1s'
+    // controls.style.animationFillMode = 'forwards'
+  }
+
+  function controlsHover() {
+    controls.style.animation = ''
+    controls.style.animation = 'controls_anim 1s'
+    controls.style.animationFillMode = 'forwards'    
+  }
+
 
   function returnToMain() {
+    froggerHardReset()
     resetFunc()
     tetrisDomPause.style.display = 'none'
     selectorContainer.style.display = 'flex'
     tetris.style.display = 'none'
     flTron.style.display = 'none'
     back.style.display = 'none'
+    controls.classList.remove('frogger_style_controls')
+    controls.childNodes.forEach(element => {
+      if (element.className) element.style.display = 'none'
+    })
     frogger.style.display = 'none'
+    controls.style.display = 'none'
+    pageContainer.style.background = 'url("https://www.publicdomainpictures.net/pictures/320000/velka/abstrakt-wasserfarbe-hintergrund-1575395840syM.jpg")'
   }
   
   back.addEventListener('click', returnToMain)
+  controls.addEventListener('mouseout', controlsUnHover)
+  controls.addEventListener('mouseover', controlsHover)
 }
 
 window.addEventListener('DOMContentLoaded', init)
