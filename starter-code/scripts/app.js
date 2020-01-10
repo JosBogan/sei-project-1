@@ -1658,6 +1658,66 @@ function init() {
     }, row10.tickRate)
   }
 
+  function froggerLevel3Rows() {
+    froggerRows.all.forEach(row => {
+      clearInterval(row.tickId)
+      row.items = []
+    })
+    froggerItemPaint()
+    row1 = new LeftRow(600, 12, [4])
+    row2 = new RightRow(500, 11, [3, 5])
+    row3 = new LeftRow(500, 10, [2, 4, 4, 4])
+    row4 = new RightRow(200, 9, [3, 13])
+    row5 = new LeftRow(500, 8, [4, 4, 6])
+    row6 = new LeftRow(300, 6, [5, 5, 7])
+    row7 = new RightRow(550, 5, [8, 5])
+    row8 = new RightRow(500, 4, [9])
+    row9 = new LeftRow(350, 3, [3, 3, 4, 4])
+    row10 = new RightRow(550, 2, [6])
+    setFroggerRows()
+    setAnimationSpeeds()
+    createItem(row1, 1)
+    createItem(row2, 1)
+    createItem(row3, 1)
+    createItem(row4, 1)
+    createItem(row5, 2)
+    createItem(row6, 3)
+    createItem(row7, 3)
+    createItem(row8, 6)
+    createItem(row9, 2)
+    createItem(row10, 4)
+    row1.tickId = setInterval(function() {
+      rowTimer(row1, 1)
+    }, row1.tickRate)
+    row2.tickId = setInterval(function() {
+      rowTimer(row2, 1)
+    }, row2.tickRate)
+    row3.tickId = setInterval(function() {
+      rowTimer(row3, 1)
+    }, row3.tickRate)
+    row4.tickId = setInterval(function() {
+      rowTimer(row4, 1)
+    }, row4.tickRate)
+    row5.tickId = setInterval(function() {
+      rowTimer(row5, 2)
+    }, row5.tickRate)
+    row6.tickId = setInterval(function() {
+      rowTimer(row6, 3)
+    }, row6.tickRate)
+    row7.tickId = setInterval(function() {
+      rowTimer(row7, 3)
+    }, row7.tickRate)
+    row8.tickId = setInterval(function() {
+      rowTimer(row8, 6)
+    }, row8.tickRate)
+    row9.tickId = setInterval(function() {
+      rowTimer(row9, 2)
+    }, row9.tickRate)
+    row10.tickId = setInterval(function() {
+      rowTimer(row10, 4)
+    }, row10.tickRate)
+  }
+
   function rowTimer(row, itemLength) {
     row.move()
     spawnRateContainer(row, itemLength)
