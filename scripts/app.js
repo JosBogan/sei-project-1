@@ -41,7 +41,7 @@ function init() {
   let playing = false
   let paused = false
   let x // VARIABLE THAT DETERMINS BLOCK POSITIONS
-  let storedTetrisScores = localStorage.getItem('storedTetrisScores') ? JSON.parse(localStorage.getItem('storedTetrisScores')) : [] // I use it later on so not sure why it has a linter
+  const storedTetrisScores = localStorage.getItem('storedTetrisScores') ? JSON.parse(localStorage.getItem('storedTetrisScores')) : [] // I use it later on so not sure why it has a linter
   // const tetrisData = JSON.parse(localStorage.getItem('storedTetrisScores'))
 
   // Block constructor object
@@ -696,6 +696,7 @@ function init() {
   const flHeight = 80
   const flWidth = 104
   const flSquares = []
+  let flKeyToggle = false
 
   // stargin points for all potentional players
 
@@ -816,23 +817,27 @@ function init() {
   // input events
 
   function flKeyDown() {
-    if (!flPlaying) return
+    if (!flPlaying || flKeyToggle) return
     switch (event.key) {
       case 'ArrowUp':
         if (flP1.direction === flP1.directions[1]) return
         flP1.direction = flP1.directions[3]
+        flKeyToggle = true
         break
       case 'ArrowLeft':
         if (flP1.direction === flP1.directions[0]) return
         flP1.direction = flP1.directions[2]
+        flKeyToggle = true
         break
       case 'ArrowDown':
         if (flP1.direction === flP1.directions[3]) return
         flP1.direction = flP1.directions[1]
+        flKeyToggle = true
         break
       case 'ArrowRight':
         if (flP1.direction === flP1.directions[2]) return
         flP1.direction = flP1.directions[0]
+        flKeyToggle = true
         break
     }
     flPaint()
@@ -918,6 +923,7 @@ function init() {
       flplayer.active.push(flplayer.x)
     })
     flPlayerCountCheck()
+    flKeyToggle = false
   }
 
   function flMessage() {
@@ -1127,7 +1133,8 @@ function init() {
   let frogsSafe = 0
   let froggerResetState = false
   let froggerScore = 0
-  let storedFroggerScores = localStorage.getItem('storedFroggerScores') ? JSON.parse(localStorage.getItem('storedFroggerScores')) : []
+  let froggerLevel = 1
+  const storedFroggerScores = localStorage.getItem('storedFroggerScores') ? JSON.parse(localStorage.getItem('storedFroggerScores')) : []
   // const froggerData = JSON.parse(localStorage.getItem('storedFroggerScores'))
 
   let pavementArray = null
@@ -1446,7 +1453,19 @@ function init() {
       UpdateFroggerScore(1000)
       setTimeout(removeSafeFrogs, 1000)
       frogsSafe = 0
-      froggerLevel2Rows()
+      froggerLevel++
+      changeLevelFunc()
+    }
+  }
+
+  function changeLevelFunc() {
+    switch (froggerLevel) {
+      case 2:
+        froggerLevel2Rows()
+        break
+      case 3:
+        froggerLevel3Rows()
+        break
     }
   }
 
@@ -1592,6 +1611,7 @@ function init() {
     UpdateFroggerScore(-froggerScore)
     frogLives = 3
     frogsSafe = 0
+    froggerLevel = 1
     froggerPlaying = false
     froggerMessage.style.display = 'none'
     froggerLifePoints.forEach(life => life.style.display = 'block')
@@ -1670,10 +1690,10 @@ function init() {
     row4 = new RightRow(200, 9, [3, 13])
     row5 = new LeftRow(500, 8, [4, 4, 6])
     row6 = new LeftRow(300, 6, [5, 5, 7])
-    row7 = new RightRow(550, 5, [8, 5])
+    row7 = new RightRow(500, 5, [8, 5, 5])
     row8 = new RightRow(500, 4, [9])
-    row9 = new LeftRow(350, 3, [3, 3, 4, 4])
-    row10 = new RightRow(550, 2, [6])
+    row9 = new LeftRow(550, 3, [4])
+    row10 = new RightRow(400, 2, [6, 12])
     setFroggerRows()
     setAnimationSpeeds()
     createItem(row1, 1)
@@ -1826,6 +1846,7 @@ function init() {
   function froggerStartFunc() {
     activeFrog = null
     activeFrog = new Frog(froggerStartingPos, true)
+    froggerLevel = 1
     UpdateFroggerScore(-froggerScore)
     froggerSquares.forEach(square => square.classList.remove('safe_frog_right', 'safe_frog_left'))
     frogLives = 3
