@@ -367,21 +367,49 @@ function init() {
     }
   }
 
-  function moveDownEachColour(inc, z) { // shift everything  higher and left over from above down one
-    if (colour1Array[inc] < z) {
-      colour1Array[inc] += width
+  // function moveDownEachColour(inc, z) { // shift everything  higher and left over from above down one
+  //   if (colour1Array[inc] < z) {
+  //     colour1Array[inc] += width
+  //   }
+  //   if (colour2Array[inc] < z) {
+  //     colour2Array[inc] += width
+  //   }
+  //   if (colour3Array[inc] < z) {
+  //     colour3Array[inc] += width
+  //   }
+  //   if (colour4Array[inc] < z) {
+  //     colour4Array[inc] += width
+  //   }
+  //   if (colour5Array[inc] < z) {
+  //     colour5Array[inc] += width
+  //   }
+  // }
+
+  function moveDownEachColour(tetrisRowIndex) {
+    for (let q = 0; q < colour1Array.length; q++) {
+      if (colour1Array[q] < tetrisRowIndex) {
+        colour1Array[q] += width
+      }
     }
-    if (colour2Array[inc] < z) {
-      colour2Array[inc] += width
+    for (let q = 0; q < colour2Array.length; q++) {
+      if (colour2Array[q] < tetrisRowIndex) {
+        colour2Array[q] += width
+      }
     }
-    if (colour3Array[inc] < z) {
-      colour3Array[inc] += width
+    for (let q = 0; q < colour3Array.length; q++) {
+      if (colour3Array[q] < tetrisRowIndex) {
+        colour3Array[q] += width
+      }
     }
-    if (colour4Array[inc] < z) {
-      colour4Array[inc] += width
+    for (let q = 0; q < colour4Array.length; q++) {
+      if (colour4Array[q] < tetrisRowIndex) {
+        colour4Array[q] += width
+      }
     }
-    if (colour5Array[inc] < z) {
-      colour5Array[inc] += width
+    for (let q = 0; q < colour5Array.length; q++) {
+      if (colour5Array[q] < tetrisRowIndex) {
+        colour5Array[q] += width
+      }
     }
   }
 
@@ -400,9 +428,10 @@ function init() {
         for (let q = 0; q < active.length; q++) {
           if (active[q] < rowComplete[0]) {
             active[q] += width  // for each block if it is higher than the first one of the row that was spliced, move down
-            moveDownEachColour(q, rowComplete[0]) // do the same for coloured arrays
+            // moveDownEachColour(q, rowComplete[0]) // do the same for coloured arrays
           }
         }
+        moveDownEachColour(rowComplete[0])
       }
     }
     score += (10 * (n * n)) // scoring
