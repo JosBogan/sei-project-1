@@ -827,7 +827,7 @@ ul > li:first-child > *, ul > li:first-child{
   100% {transform: translateX(20px);}
 }
 
-@keyframes car_right_test {
+/* @keyframes car_right_test {
   0% {transform: translateX(-20px);}
   100% {transform: translateX(680px);}
 }
@@ -835,11 +835,7 @@ ul > li:first-child > *, ul > li:first-child{
 @keyframes frogger_right {
   0% {transform: translateX(-20px);}
   100% {transform: translateX(20px);}
-}
-
-@keyframes frogger_left {
-
-}
+} */
 
 @keyframes jump_animation {
   0% {background-image: url('../assets/frogger1.png');}
