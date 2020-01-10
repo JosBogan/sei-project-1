@@ -9,10 +9,12 @@ function init() {
   const tetrisControls = document.querySelector('.tetris_controls')
   const flTronControls = document.querySelector('.fl_tron_controls')
   const froggerControls = document.querySelector('.frogger_controls')
+  const highScoreSelect = document.querySelector('.high_scores_selector')
+  const highScoreContainer = document.querySelector('.high_score_container')
+  const tetrisHighScoresDomElements = document.querySelectorAll('.tetris_score')
+  const froggerHighScoresDomElements = document.querySelectorAll('.frogger_score')
 
-  // Variables
-
-  let timerId = null
+  // TETRIS
 
   // Tetris DOM Variables
 
@@ -27,10 +29,9 @@ function init() {
   const tetris = document.querySelector('#tetris')
   const tetrisPlay = document.querySelector('.tetris_selector')
 
-  // TETRIS
+  // TETRIS variables
 
-  // Tetris Variables 
-
+  let timerId = null
   const height = 24
   let width = 10
   const sideBarDiff = 6
@@ -39,17 +40,23 @@ function init() {
   const bankSquares = []
   let playing = false
   let paused = false
-  let x
+  let x // VARIABLE THAT DETERMINS BLOCK POSITIONS
+  let storedTetrisScores = localStorage.getItem('storedTetrisScores') ? JSON.parse(localStorage.getItem('storedTetrisScores')) : [] // I use it later on so not sure why it has a linter
+  // const tetrisData = JSON.parse(localStorage.getItem('storedTetrisScores'))
+
+  // Block constructor object
 
   class Block {
     constructor() {
-      this.initId = initGen()
-      this.rotId = rotGen()
-      this.init = tetriminos[this.initId][this.rotId]
-      this.colour = colourGen()
-      this.blocks = this.init()
+      this.initId = initGen() // has the id of the block (relates to tetrimino array)
+      this.rotId = rotGen() // has the rotation id of the block (relates to tetrimino array)
+      this.init = tetriminos[this.initId][this.rotId] //stores the function referenced by the rot and init porperties above
+      this.colour = colourGen() // holds the colour 
+      this.blocks = this.init() // runs the function stored in init to generate block positions
     }
   }
+
+  // sidebar variables
 
   let current
   let next
@@ -74,6 +81,8 @@ function init() {
   let colour4Array = []
   const colour5 = 'gold'
   let colour5Array = []
+
+  // long array of functions that contain the tetrimino position data for each block and rotation
 
   const tetriminos = [
     [
@@ -218,15 +227,15 @@ function init() {
 
   // Block property Functions
 
-  function initGen() {
+  function initGen() { // random id used to reference tetriminos array
     return Math.floor(Math.random() * (tetriminos.length))
   }
 
-  function rotGen() {
+  function rotGen() { // random rotation id used to reference blocks within tetriminos array
     return Math.floor(Math.random() * 4)
   }
 
-  function colourGen() {
+  function colourGen() { // cycles and returns colours 
     colourRotator++
     if (colourRotator === 5) {
       colourRotator = 0
@@ -246,7 +255,7 @@ function init() {
   }
 
 
-  function colourArraySwitch() {
+  function colourArraySwitch() { // adds the current block to the it's colour dependant array of static blocks
     switch (current.colour) {
       case colour1:
         colour1Array = colour1Array.concat(current.blocks)
@@ -266,18 +275,18 @@ function init() {
     }
   }
 
-  function rotateBlock() {
+  function rotateBlock() { // function to rotate blocks, it changes the rotId of the current block to cycle through the tertiminos array
     if (current.rotId === tetriminos[current.initId].length - 1) { 
       current.rotId = 0
     } else {
       current.rotId++
     }
-    current.init = tetriminos[current.initId][current.rotId]
-    current.blocks = current.init()
-    if ((rightWallRotChecker() || leftWallRotChecker()) && (leftBlockRotChecker() || rightBlockRotChecker()) && !baseChecker()) {
+    current.init = tetriminos[current.initId][current.rotId] //res applys the new init function on current block
+    current.blocks = current.init() // calls the init function to populate block positions
+    if ((rightWallRotChecker() || leftWallRotChecker()) && (leftBlockRotChecker() || rightBlockRotChecker()) && !baseChecker()) { // big old collision checker
       removeAndRepaint()
     } else {
-      if (current.rotId === 0) {
+      if (current.rotId === 0) { // if there is a collision, change the id, init function and block posiotions back to previous before repainting
         current.rotId = tetriminos[current.initId].length - 1
       } else {
         current.rotId--
@@ -288,28 +297,28 @@ function init() {
     removeAndRepaint()
   }
 
-  function blockPick() {
+  function blockPick() { // creates new block
     current = new Block()
   }
 
-  function nextBlockPick() {
+  function nextBlockPick() { //if there is a next block, make that block the current 
     if (next) {
       current = next
     }
-    width = 4
-    x = 6
+    width = 4 // change all of the game stats so when the next block is painted in the mini-grid it doesnt use the large grid scale
+    x = 6 // ""
     next = new Block
     nextBlockPaint()
     width = 10
   }
 
-  function nextBlockPaint() {
+  function nextBlockPaint() { //remve and repaint the next block
     nextSquares.forEach(square => square.className = 'game_square')
     next.blocks.forEach(index => nextSquares[index].classList.add(next.colour))
     resetX()
   }
 
-  function removeAndRepaint() {
+  function removeAndRepaint() { // remove and repaint the current block
     squares.forEach(square => square.classList.remove(colour1, colour2, colour3, colour4, colour5))
     current.blocks.forEach(index => squares[index].classList.add(current.colour))
     colour1Array.forEach(index => squares[index].classList.add(colour1))
@@ -320,22 +329,22 @@ function init() {
   }
 
   function resetX() {
-    x = 15
+    x = 15 // resets original position
   }
 
-  function baseCollision() {
-    if ((baseChecker() || blockChecker()) && playing) {
+  function baseCollision() { // base collision function 
+    if ((baseChecker() || blockChecker()) && playing) { //if the current block hits the bottom or another block
       tetrisPop.play()
-      active = active.concat(current.blocks)
-      colourArraySwitch()
-      gameOverFunc()
-      resetX()
-      scoreFunc()
-      nextBlockPick()
+      active = active.concat(current.blocks) // move the indexes of current array to the active array(array of static blocks at the bottom)
+      colourArraySwitch() // does the same as above but for individual colours
+      gameOverFunc() // check for game over condition is met
+      resetX() // reset block postions
+      scoreFunc() // scoring
+      nextBlockPick() // pick the next block
     }
   }
 
-  function spliceFromEachColour(z) {
+  function spliceFromEachColour(z) { // remove blocks from each active(static) colour array
     if (colour1Array.includes(z)) {
       const index = colour1Array.indexOf(z)
       colour1Array.splice(index, 1)
@@ -358,7 +367,7 @@ function init() {
     }
   }
 
-  function moveDownEachColour(inc, z) {
+  function moveDownEachColour(inc, z) { // shift everything  higher and left over from above down one
     if (colour1Array[inc] < z) {
       colour1Array[inc] += width
     }
@@ -376,40 +385,40 @@ function init() {
     }
   }
 
-  function scoreFunc() {
-    active.sort((a, b) => a - b)
+  function scoreFunc() { //scoring
+    active.sort((a, b) => a - b) // sort the active array (array of static blocks at the bottom)
     let n = 0
-    for (let i = 0; i < height * width; i += width) {
-      const rowComplete = active.filter(item => item >= i && item < (i + width))
-      if (rowComplete.length === width) {
+    for (let i = 0; i < height * width; i += width) { // iterate on each row of the board
+      const rowComplete = active.filter(item => item >= i && item < (i + width)) // filter the active array for all the indexes within the row
+      if (rowComplete.length === width) { /// if that filtered row's length is equal to the width of the board (i.e it is a full row)
         n++
-        for (let q = 0; q < rowComplete.length; q++) {
+        for (let q = 0; q < rowComplete.length; q++) { // for each block
           const index = active.indexOf(rowComplete[q])
-          active.splice(index, 1)
-          spliceFromEachColour(rowComplete[q])
+          active.splice(index, 1) // splice from active array
+          spliceFromEachColour(rowComplete[q]) // do the same for coloured arrays
         }
         for (let q = 0; q < active.length; q++) {
           if (active[q] < rowComplete[0]) {
-            active[q] += width
-            moveDownEachColour(q, rowComplete[0])
+            active[q] += width  // for each block if it is higher than the first one of the row that was spliced, move down
+            moveDownEachColour(q, rowComplete[0]) // do the same for coloured arrays
           }
         }
       }
     }
-    score += (10 * (n * n))
+    score += (10 * (n * n)) // scoring
     tetrisDomScore.innerHTML = score
-    speedUp()
+    speedUp() // speed function 
   }
 
-  function gravityTimer() {
-    baseCollision()
-    x += width
-    current.blocks = current.init()
-    removeAndRepaint()
+  function gravityTimer() { // timout tick function
+    baseCollision() // checks base collision
+    x += width // updates root opsition
+    current.blocks = current.init() // updates block positions
+    removeAndRepaint() 
   }
 
 
-  function speedUp() {
+  function speedUp() { // check score to speed up function
     if (score > levelUpScore) {
       speed -= 100
       clearInterval(timerId)
@@ -418,7 +427,7 @@ function init() {
     }
   }
 
-  function bankFunc() {
+  function bankFunc() { // bank function works similar to next, rotating the banked and current blocks
     width = 4
     const bankedX = x
     x = 6
@@ -450,7 +459,7 @@ function init() {
     removeAndRepaint()
   }
 
-  // Collision detection Functions
+  // Collision detection Functions - all pretty much work the same way, check to see if current block positions are intersecting the walls or another block
   
 
   function rightWallChecker() {
@@ -493,7 +502,7 @@ function init() {
     return !current.blocks.some(index => active.includes(index))
   }
 
-  function startTimer() {
+  function startTimer() { // timer set function
     timerId = setInterval(gravityTimer, speed)
   }
   
@@ -507,7 +516,7 @@ function init() {
     }
   }
 
-  function startFunc() {
+  function startFunc() { // does what it says on the tin
     if (!playing) {
       if (!paused) {
         resetFunc()
@@ -530,7 +539,7 @@ function init() {
     }
   }
 
-  function resetFunc() {
+  function resetFunc() { // as with above
     playing = false
     clearInterval(timerId)
     tetrisStart.innerHTML = 'Play'
@@ -551,7 +560,7 @@ function init() {
     resetX()
   }
 
-  function stopGame() {
+  function stopGame() { // general gamestop function
     clearInterval(timerId)
     tryAgainPopUp()
     playing = false
@@ -560,8 +569,15 @@ function init() {
     tetrisTheme.currentTime = 0
   }
 
+  function tetrisSetScores() { // record scores in local storage function
+    storedTetrisScores.push(score)
+    storedTetrisScores.sort((a,b) => b - a)
+    localStorage.setItem('storedTetrisScores', JSON.stringify(storedTetrisScores))
+  }
+
   function gameOverFunc(){
     if (active.some(item => item < width * 5)) {
+      tetrisSetScores()
       stopGame()
     }
   }
@@ -571,17 +587,17 @@ function init() {
     tetrisDomPause.innerHTML = 'Bad Luck, Try Again!'
   }
 
-  function keyDownEvents(e) {
+  function keyDownEvents(e) { // keyEvents
     if (playing) {
       if (e.key === 'ArrowRight' && rightWallChecker() && rightBlockChecker()) {
-        x++
-        current.blocks = current.init()
+        x++ // update position 
+        current.blocks = current.init() // generate new block positions based on new x value
         removeAndRepaint()
       } else if (e.key === 'ArrowLeft' && leftWallChecker() && leftBlockChecker()) {
         x--
         current.blocks = current.init()
         removeAndRepaint()
-      } else if (e.key === 'ArrowDown') {
+      } else if (e.key === 'ArrowDown') { // increase the drop speed
         clearInterval(timerId)
         timerId = setInterval(gravityTimer, 50)
       } else if (e.key === 'ArrowUp') {
@@ -592,9 +608,9 @@ function init() {
     }
   }
 
-  function keyUpEvents(e) {
+  function keyUpEvents(e) { 
     if (playing) {
-      if (e.key === 'ArrowDown') {
+      if (e.key === 'ArrowDown') { // reset drop speed
         clearInterval(timerId)
         gravityTimer()
         startTimer()
@@ -602,7 +618,7 @@ function init() {
     }
   }
 
-  function displayTetris() {
+  function displayTetris() { // tetris display function
     selectorContainer.style.display = 'none'
     tetris.style.display = 'flex'
     back.style.display = 'block'
@@ -651,6 +667,9 @@ function init() {
   const flHeight = 80
   const flWidth = 104
   const flSquares = []
+
+  // stargin points for all potentional players
+
   const fl2PStart = ((flHeight * flWidth) / 2) + (flWidth / 4)
   const fl2PStart2 = ((flHeight * flWidth) / 2) + ((flWidth / 4) * 3)
   const fl3PStart = fl2PStart - ((flHeight * flWidth) / 4)
@@ -658,6 +677,8 @@ function init() {
   const fl3PStart3 = (((flHeight * flWidth) / 4) * 3) + (flWidth / 2)
   const fl4PStart3 = fl2PStart + ((flHeight * flWidth) / 4)
   const fl4PStart4 = fl2PStart2 + ((flHeight * flWidth) / 4)
+
+  // player variables
 
   let flP1 = null
   let flP2 = null
@@ -671,6 +692,8 @@ function init() {
   const flSpeed = 40
   let flPlaying = false
   let flResetScreen = false
+
+  // player constructor 
 
   class FlPlayer {
     constructor(x, active, name, pointList, player) {
@@ -718,7 +741,7 @@ function init() {
     }
   }
 
-  function tronGridCreate() {
+  function tronGridCreate() { // grid create
     for (let i = 0; i < flHeight; i++) {
       for (let i = 0; i < flWidth; i++) {
         const square = document.createElement('div')
@@ -729,7 +752,7 @@ function init() {
     }
   }
 
-  function flPaint() {
+  function flPaint() { // paint players
     arrayOfFlPlayers.forEach(player => {
       player.active.forEach(index => {
         flSquares[index].classList.add(`${player.name}background`)
@@ -737,7 +760,7 @@ function init() {
     })
   }
 
-  function flResetPaint() {
+  function flResetPaint() { // reset player paint
     arrayOfAllFlPlayers.forEach(player => {
       player.active.forEach(index => {
         flSquares[index].classList.add(`${player.name}background`)
@@ -745,12 +768,12 @@ function init() {
     })
   }
 
-  function clearFlPaint() {
+  function clearFlPaint() { // clear all paint 
     flSquares.forEach(index => index.classList.remove('flP1background', 'flP2background', 'flP3background', 'flP4background'))
   }
 
-  function flPlayerCountCheck() {
-    if (arrayOfFlPlayers.length === 1) {
+  function flPlayerCountCheck() { // see how many players are left alive
+    if (arrayOfFlPlayers.length === 1) { // if its only one, do some stuff
       arrayOfFlPlayers[0].score++
       flUpdateScore()
       clearInterval(timerId)
@@ -760,6 +783,8 @@ function init() {
       flWinMessage.style.display = 'inline'
     }
   }
+
+  // input events
 
   function flKeyDown() {
     if (!flPlaying) return
@@ -1073,6 +1098,8 @@ function init() {
   let frogsSafe = 0
   let froggerResetState = false
   let froggerScore = 0
+  let storedFroggerScores = localStorage.getItem('storedFroggerScores') ? JSON.parse(localStorage.getItem('storedFroggerScores')) : []
+  // const froggerData = JSON.parse(localStorage.getItem('storedFroggerScores'))
 
   let pavementArray = null
   let waterArray = null
@@ -1152,26 +1179,32 @@ function init() {
     }
   }
 
-  const row1 = new LeftRow(500, 12, [4])
-  const row2 = new RightRow(500, 11, [3, 6])
-  const row3 = new LeftRow(500, 10, [3, 3, 6])
-  const row4 = new RightRow(500, 9, [13])
-  const row5 = new LeftRow(400, 8, [4, 9])
-  const row6 = new LeftRow(350, 6, [4])
-  const row7 = new RightRow(600, 5, [5])
-  const row8 = new RightRow(300, 4, [9])
-  const row9 = new LeftRow(350, 3, [4, 4, 4, 6])
-  const row10 = new RightRow(550, 2, [6])
+  let row1 = new LeftRow(500, 12, [4])
+  let row2 = new RightRow(500, 11, [3, 6])
+  let row3 = new LeftRow(500, 10, [3, 3, 6])
+  let row4 = new RightRow(500, 9, [13])
+  let row5 = new LeftRow(400, 8, [4, 9])
+  let row6 = new LeftRow(350, 6, [4])
+  let row7 = new RightRow(600, 5, [5])
+  let row8 = new RightRow(300, 4, [9])
+  let row9 = new LeftRow(350, 3, [4, 4, 4, 6])
+  let row10 = new RightRow(550, 2, [6])
 
-  const froggerRows = {
-    all: [row1, row2, row3, row4, row5, row6, row7, row8, row9, row10],
-    road: [row1, row2, row3, row4, row5],
-    water: [row6, row7, row8, row9, row10],
-    logs: [row7, row8, row10],
-    turtles: [row6, row9],
-    right: [row2, row4, row7, row8, row10], 
-    left: [row1, row3, row5, row6, row9]
+  let froggerRows = null
+
+  function setFroggerRows() {
+    froggerRows = {
+      all: [row1, row2, row3, row4, row5, row6, row7, row8, row9, row10],
+      road: [row1, row2, row3, row4, row5],
+      water: [row6, row7, row8, row9, row10],
+      logs: [row7, row8, row10],
+      turtles: [row6, row9],
+      right: [row2, row4, row7, row8, row10], 
+      left: [row1, row3, row5, row6, row9]
+    }
   }
+
+  setFroggerRows()
 
   class Frog {
     constructor(position, active) {
@@ -1208,46 +1241,46 @@ function init() {
     froggerSquares[activeFrog.position].classList.add('frog')
   }
 
-  function froggerBackgroundImageConstructor(row) {
-    let bg = ''
-    for (let i = 0; i < row.spawnRate.length; i++) {
-      for (let s = 0; s < row.items[0].positions.length; s++) {
-        if (i === row.items[0].positions.length - 1) {
-          bg += 'url("../assets/log_right.png")'
-        } else if (i === 0) {
-          bg += 'url("../assets/log_left.png"),'
-        } else {
-          bg += 'url("../assets/log_middle.png"),'
-        }
-      }
-    }
-    return bg
-  }
+  // function froggerBackgroundImageConstructor(row) {
+  //   let bg = ''
+  //   for (let i = 0; i < row.spawnRate.length; i++) {
+  //     for (let s = 0; s < row.items[0].positions.length; s++) {
+  //       if (i === row.items[0].positions.length - 1) {
+  //         bg += 'url("../assets/log_right.png")'
+  //       } else if (i === 0) {
+  //         bg += 'url("../assets/log_left.png"),'
+  //       } else {
+  //         bg += 'url("../assets/log_middle.png"),'
+  //       }
+  //     }
+  //   }
+  //   return bg
+  // }
 
-  function froggerBackgroundPositionConstructor(row) {
-    let distance = '0 0,'
-    for (let i = 1; i < row.items[0].positions.length; i++) {
-      if (i !== row.items[0].positions.length - 1) {
-        distance += (i * 40 + 'px ' + 0 + ',')
-      } else {
-        distance += (i * 40 + 'px ' + 0)
-      }
-    }
-    return distance
-  }
+  // function froggerBackgroundPositionConstructor(row) {
+  //   let distance = '0 0,'
+  //   for (let i = 1; i < row.items[0].positions.length; i++) {
+  //     if (i !== row.items[0].positions.length - 1) {
+  //       distance += (i * 40 + 'px ' + 0 + ',')
+  //     } else {
+  //       distance += (i * 40 + 'px ' + 0)
+  //     }
+  //   }
+  //   return distance
+  // }
 
-  function froggerRowHeightConstructor(row) {
-    return `${(row.row - 1) * 40}px`
-  }
+  // function froggerRowHeightConstructor(row) {
+  //   return `${(row.row - 1) * 40}px`
+  // }
 
-  function froggerPseudoElementCreate(row) {
-    document.documentElement.style.setProperty('--row_7_bg_images', froggerBackgroundImageConstructor(row7))
-    document.documentElement.style.setProperty('--row_7_bg_pos', froggerBackgroundPositionConstructor(row7))
-    document.documentElement.style.setProperty('--row_7_height', froggerRowHeightConstructor(row7))
-    console.log(document.documentElement.style.getPropertyValue('--row_7_bg_images'))
-    document.documentElement.style.setProperty('--row_7_width', (row7.items[0].positions.length) * (row7.items.length))
-    froggerSquares[row.startingSquare - (froggerWidth * (row.row - 1)) + row7.items.length].classList.add('row_7_test')
-  }
+  // function froggerPseudoElementCreate(row) {
+  //   document.documentElement.style.setProperty('--row_7_bg_images', froggerBackgroundImageConstructor(row7))
+  //   document.documentElement.style.setProperty('--row_7_bg_pos', froggerBackgroundPositionConstructor(row7))
+  //   document.documentElement.style.setProperty('--row_7_height', froggerRowHeightConstructor(row7))
+  //   console.log(document.documentElement.style.getPropertyValue('--row_7_bg_images'))
+  //   document.documentElement.style.setProperty('--row_7_width', (row7.items[0].positions.length) * (row7.items.length))
+  //   froggerSquares[row.startingSquare - (froggerWidth * (row.row - 1)) + row7.items.length].classList.add('row_7_test')
+  // }
 
   function froggerItemPaint() {
     froggerSquares.forEach(square => square.classList.remove(
@@ -1333,21 +1366,26 @@ function init() {
   function frogDead() {
     activeFrog.position = froggerStartingPos
     froggerPaintFrog()
-    frogLives--
     froggerResetState = false
     for (let i = 0; i < Math.abs(frogLives - 3); i++) {
       froggerLifePoints[i].style.display = 'none'
     }
     if (frogLives === 0) {
+      froggerSetScores()
       froggerLoseFunc()
     }
   }
+
+  function froggerSetScores() {
+    storedFroggerScores.push(froggerScore)
+    storedFroggerScores.sort((a,b) => b - a)
+    localStorage.setItem('storedFroggerScores', JSON.stringify(storedFroggerScores))
+  } 
 
   function UpdateFroggerScore(number) {
     froggerScore += number
     const multiple = 6 - froggerScore.toString().length
     froggerDOMScore.innerHTML = '0'.repeat(multiple) + froggerScore
-    console.log(froggerScore)
   }
 
   function froggerLoseFunc() {
@@ -1379,6 +1417,7 @@ function init() {
       UpdateFroggerScore(1000)
       setTimeout(removeSafeFrogs, 1000)
       frogsSafe = 0
+      froggerLevel2Rows()
     }
   }
 
@@ -1403,6 +1442,7 @@ function init() {
     if (waterArray.some(square => froggerSquares.indexOf(square) === activeFrog.position)) {
       froggerSquares[activeFrog.position].classList.add('frogger_water_dead')
       froggerResetState = true
+      frogLives--
       setTimeout(frogDead, 2000)
     }
   }
@@ -1415,6 +1455,7 @@ function init() {
     if (froggerRows.road.some(row => row.items.some(item => item.positions.includes(activeFrog.position)))) {
       froggerSquares[activeFrog.position].classList.add('frogger_car_dead')
       froggerResetState = true
+      frogLives--
       setTimeout(frogDead, 2000)
     }
   }
@@ -1429,9 +1470,6 @@ function init() {
     froggerSquares[activeFrog.position - froggerWidth - 1].classList.contains('safe_frog_left'))
   }
 
-  // function frogSafe() {
-  //   return (frogger)
-  // }
 
   // BOARD CREATION
 
@@ -1517,6 +1555,7 @@ function init() {
       clearInterval(row.tickId)
       row.items = []
     })
+    activeFrog = new Frog(froggerStartingPos, true)
     froggerSquares.forEach(square => square.classList.remove('safe_frog_right', 'safe_frog_left'))
     froggerPaintFrog()
     froggerItemPaint()
@@ -1531,7 +1570,63 @@ function init() {
   }
 
   function froggerLevel2Rows() {
-
+    froggerRows.all.forEach(row => {
+      clearInterval(row.tickId)
+      row.items = []
+    })
+    froggerItemPaint()
+    row1 = new LeftRow(500, 12, [4])
+    row2 = new RightRow(500, 11, [3, 6])
+    row3 = new LeftRow(500, 10, [3, 3, 6])
+    row4 = new RightRow(200, 9, [3, 13])
+    row5 = new LeftRow(500, 8, [5])
+    row6 = new LeftRow(400, 6, [6, 6, 4])
+    row7 = new RightRow(550, 5, [8, 5, 5])
+    row8 = new RightRow(300, 4, [9])
+    row9 = new LeftRow(350, 3, [3, 3, 4, 4])
+    row10 = new RightRow(550, 2, [6])
+    setFroggerRows()
+    setAnimationSpeeds()
+    createItem(row1, 1)
+    createItem(row2, 1)
+    createItem(row3, 1)
+    createItem(row4, 1)
+    createItem(row5, 2)
+    createItem(row6, 3)
+    createItem(row7, 3)
+    createItem(row8, 6)
+    createItem(row9, 2)
+    createItem(row10, 4)
+    row1.tickId = setInterval(function() {
+      rowTimer(row1, 1)
+    }, row1.tickRate)
+    row2.tickId = setInterval(function() {
+      rowTimer(row2, 1)
+    }, row2.tickRate)
+    row3.tickId = setInterval(function() {
+      rowTimer(row3, 1)
+    }, row3.tickRate)
+    row4.tickId = setInterval(function() {
+      rowTimer(row4, 1)
+    }, row4.tickRate)
+    row5.tickId = setInterval(function() {
+      rowTimer(row5, 2)
+    }, row5.tickRate)
+    row6.tickId = setInterval(function() {
+      rowTimer(row6, 3)
+    }, row6.tickRate)
+    row7.tickId = setInterval(function() {
+      rowTimer(row7, 3)
+    }, row7.tickRate)
+    row8.tickId = setInterval(function() {
+      rowTimer(row8, 6)
+    }, row8.tickRate)
+    row9.tickId = setInterval(function() {
+      rowTimer(row9, 2)
+    }, row9.tickRate)
+    row10.tickId = setInterval(function() {
+      rowTimer(row10, 4)
+    }, row10.tickRate)
   }
 
   function rowTimer(row, itemLength) {
@@ -1610,7 +1705,6 @@ function init() {
     row1.tickId = setInterval(function() {
       rowTimer(row1, 1)
     }, row1.tickRate)
-    console.log(row1.tickRate)
     row2.tickId = setInterval(function() {
       rowTimer(row2, 1)
     }, row2.tickRate)
@@ -1638,7 +1732,6 @@ function init() {
     row10.tickId = setInterval(function() {
       rowTimer(row10, 4)
     }, row10.tickRate)
-
   }
 
   function froggerStartFunc() {
@@ -1681,12 +1774,12 @@ function init() {
   froggerYes.addEventListener('click', froggerStartFunc)
   window.addEventListener('keydown', froggerStartTimers)
   froggerSelector.addEventListener('click', displayFrogger)
+  froggerNo.addEventListener('click', froggerHardReset)
 
 
   // FROGGER END
 
   function controlsUnHover() {
-    console.log('out')
     controls.style.animation = ''
     controls.style.animation = 'controls_anim_2 1s'
     // controls.style.animationFillMode = 'forwards'
@@ -1713,12 +1806,34 @@ function init() {
     })
     frogger.style.display = 'none'
     controls.style.display = 'none'
+    highScoreContainer.style.display = 'none'
     pageContainer.style.background = 'url("https://www.publicdomainpictures.net/pictures/320000/velka/abstrakt-wasserfarbe-hintergrund-1575395840syM.jpg")'
   }
+
+  function populateHighScores() {
+    tetrisHighScoresDomElements.forEach((score, index) => {
+      const multiple = storedTetrisScores[index] ? 6 - storedTetrisScores[index].toString().length : 0
+      !storedTetrisScores[index] ? score.innerHTML = '000000' : score.innerHTML = '0'.repeat(multiple) + storedTetrisScores[index]
+    })
+    froggerHighScoresDomElements.forEach((score, index) => {
+      const multiple = storedFroggerScores[index] ? 6 - storedFroggerScores[index].toString().length : 0
+      !storedFroggerScores[index] ? score.innerHTML = '000000' : score.innerHTML = '0'.repeat(multiple) + storedFroggerScores[index]
+    })
+  }
+
+  function displayHighScore() {
+    populateHighScores()
+    highScoreContainer.style.display = 'flex'
+    selectorContainer.style.display = 'none'
+    back.style.display = 'block'
+  }
+
+  populateHighScores()
   
   back.addEventListener('click', returnToMain)
   controls.addEventListener('mouseout', controlsUnHover)
   controls.addEventListener('mouseover', controlsHover)
+  highScoreSelect.addEventListener('click', displayHighScore)
 }
 
 window.addEventListener('DOMContentLoaded', init)

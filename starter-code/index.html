@@ -25,6 +25,10 @@
           <img src="assets/black_lily_pad.svg" alt="Frogger">
           <h2>Frogger</h2>
         </div>
+        <div class="high_scores_selector selector">
+          <img src="assets/scores.svg" alt="High Scores">
+          <h2>High Scores</h2>
+        </div>
       </div>
       <div class="outer_game_container" id="tetris">
         <div class="side_bar tetris_side_bar">
@@ -108,7 +112,7 @@
       <div class="inner_game_container frogger_game_container">
         <div class="frogger_start_text">PRESS ANY KEY TO START</div>
         <div class="message_text frogger_message_text" id="frogger_message">GAME OVER <br /> CONTINUE?
-        <div class="frogger_buttons"><button id="frogger_yes">Y</button><button class="frogger_no">N</button></div>
+        <div class="frogger_buttons"><button id="frogger_yes">Y</button><button id="frogger_no">N</button></div>
       </div>
       </div>
       <div class="frogger_bottom_bar">
@@ -121,6 +125,28 @@
           <div class="frogger_timer"></div>
           <h2 class="frogger_time">TIME</h2>
         </div>
+      </div>
+    </div>
+    <div class="high_score_container outer_game_container">
+      <div class="tetris_high_scores high_score_inner_container">
+        <h2>Tetris High Scores</h2>
+        <ul>
+          <li>1<span class="tetris_score"></span></li>
+          <li>2<span class="tetris_score"></span ></li>
+          <li>3<span class="tetris_score"></span ></li>
+          <li>4<span class="tetris_score"></span ></li>
+          <li>5<span class="tetris_score"></span ></li>
+        </ul>
+      </div>
+      <div class="frogger_high_scores high_score_inner_container">
+        <h2>Frogger High Scores</h2>
+        <ul>
+          <li>1<span class="frogger_score"></span></li>
+          <li>2<span class="frogger_score"></span></li>
+          <li>3<span class="frogger_score"></span></li>
+          <li>4<span class="frogger_score"></span></li>
+          <li>5<span class="frogger_score"></span></li>
+        </ul>
       </div>
     </div>
     <div class="controls">
