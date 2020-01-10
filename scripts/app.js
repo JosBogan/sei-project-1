@@ -814,9 +814,9 @@ function init() {
     }
   }
 
-  // input events
+  // input events -- player change direction 
 
-  function flKeyDown() {
+  function flKeyDown() { 
     if (!flPlaying || flKeyToggle) return
     switch (event.key) {
       case 'ArrowUp':
@@ -914,7 +914,7 @@ function init() {
     flPaint()
   }
 
-  function tick() {
+  function tick() { // main game timer
     flPaint()
     arrayOfFlPlayers.forEach(flplayer => {
       flplayer.x = flplayer.direction()
@@ -926,7 +926,7 @@ function init() {
     flKeyToggle = false
   }
 
-  function flMessage() {
+  function flMessage() { // show message with different potential contents
     flPlayerName.innerHTML = arrayOfFlPlayers[0].player
     flRoundDom.innerHTML = flRound
     if (arrayOfFlPlayers[0].score === 3) {
@@ -935,13 +935,13 @@ function init() {
     }
   }
 
-  function winCondition() {
+  function winCondition() { 
     if (arrayOfFlPlayers[0].score === 3) {
       flResetGame()
     }
   }
 
-  function flResetGame() {
+  function flResetGame() { // reset game function
     numPlayers.disabled = false
     flPoint.forEach(point => point.classList.remove('fl_point_fill'))
     arrayOfAllFlPlayers.forEach(player => player.score = 0)
@@ -949,7 +949,7 @@ function init() {
     flRoundMatch.innerHTML = 'Round'
   }
 
-  function flResetMatch() {
+  function flResetMatch() { // reset the whole match
     flWinMessage.style.display = 'none'
     clearFlPaint()
     resetPlayers()
@@ -961,7 +961,7 @@ function init() {
     arrayOfAllFlPlayers.forEach(player => arrayOfFlPlayers.push(player))
   }
 
-  function resetPlayers() {
+  function resetPlayers() { 
     arrayOfAllFlPlayers.forEach(player => {
       player.x = player.active[0]
       player.active = [player.x]
@@ -978,6 +978,8 @@ function init() {
     timerId = setInterval(tick, flSpeed)
     numPlayers.disabled = true
   }
+
+  // create player functions, (player starting positions depend on how many players there are)
 
   function createPlayer1(position) {
     flP1 = null
@@ -1030,13 +1032,13 @@ function init() {
     }
   }
 
-  function colourChange() {
+  function colourChange() { // changes the css variable for the player colours
     const flColour = event.target.value
     document.documentElement.style.setProperty(`--${this.dataset.name}`, flColour)
     flPaint()
   }
 
-  function setplayerStarting() {
+  function setplayerStarting() { // change player number logic functionality
     switch (numPlayers.value) {
       case '2':
         arrayOfFlPlayers = []
@@ -1059,7 +1061,7 @@ function init() {
     }
   }
 
-  function changeNumPlayers() {
+  function changeNumPlayers() { // change player DOM functionality
     numPlayersSpan.innerHTML = numPlayers.value
     players.forEach(player => player.style.visibility = 'hidden')
     for (let i = 0; i < numPlayers.value; i++) {
@@ -1078,7 +1080,7 @@ function init() {
     flTronControls.style.display = 'block'
   }
 
-  createPlayer1(1)
+  createPlayer1(1) // The game has a minimum of two players
   createPlayer2(1)
 
   tronGridCreate()
@@ -1142,28 +1144,28 @@ function init() {
   let grassArray = null
   let safeArray = null
 
-  class RowTraits {
+  class RowTraits { // constructor object for each row 
     constructor(tickRate, row, spawnRate) {
-      this.items = [],
-      this.row = row
-      this.tickRate = tickRate,
-      this.spawnRate = spawnRate,
-      this.spawnRateNum = 1,
-      this.spawnNum = 0,
-      this.spawn
-      this.tickId = null,
-      this.startingSquare,
-      this.endingSquare
+      this.items = [], // array of all moving items within the row
+      this.row = row, // row number 
+      this.tickRate = tickRate, // speed of row
+      this.spawnRate = spawnRate, // spawn rate of row 
+      this.spawnRateNum = 1, // counter to help row spawn functinoality
+      this.spawnNum = 0, // counter to help row spawn functinoality
+      this.spawn,
+      this.tickId = null, // row timer variable
+      this.startingSquare, //square that the objects start from
+      this.endingSquare // square that the objects end on
     }
   }
 
-  class LeftRow extends RowTraits {
+  class LeftRow extends RowTraits { // constructor object row of items moving left
     constructor(tickRate, row, spawnRate) {
       super(tickRate, row, spawnRate)
       this.startingSquare = (froggerWidth * row) - invisNum
       this.endingSquare = ((froggerWidth * row) - froggerWidth) + invisNum
     }
-    move() {
+    move() { // function that moves the items along
       if (
         this.items.some(item => item.positions.includes(activeFrog.position)) && 
         froggerRows.water.includes(this) &&
@@ -1186,7 +1188,7 @@ function init() {
     }
   }
 
-  class RightRow extends RowTraits {
+  class RightRow extends RowTraits { // constructor object row of items moving right
     constructor(tickRate, row, spawnRate) {
       super(tickRate, row, spawnRate)
       this.startingSquare = (froggerWidth * row) - (froggerWidth - invisNum) - 1
