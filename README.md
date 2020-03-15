@@ -1,6 +1,6 @@
-# General Assembly Project 1
+# General Assembly Project 1 - Games Portal
 
-[Project Link](https://josbogan.github.io/sei-project-1/)
+[Deployed Project Link](https://josbogan.github.io/sei-project-1/)
 
 This games portal was my first at General Assembly, developed in Vanilla JavaScript using heavy DOM manipulation. I worked alone for this project over seventeen days.
 
