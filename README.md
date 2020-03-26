@@ -130,6 +130,8 @@ The biggest win for me in FL-Tron was the introduction of CSS variables. I disco
   }
 ```
 
+For frogger I was determined to not hard code the obstable spawn so as to make adding extra levels easier in the future. I managed to achieve this by building a piece of code that takes properties from each row object and using them to calculate the spawn rate.
+
 Setting out to recreate arcade frogger turned out to be a lot more difficult than I anticipated, so the fact that visually I managed to come close, despite roadblocks such as the final safe zone for the frogs in original frogger being wider than one square on the grid.
 
 ## Challenges

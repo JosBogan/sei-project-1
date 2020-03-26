@@ -344,7 +344,7 @@ function init() {
     }
   }
 
-  function spliceFromEachColour(z) { // remove blocks from each active(static) colour array
+  function spliceFromEachColour(z) { // remove blocks from each active colour array
     if (colour1Array.includes(z)) {
       const index = colour1Array.indexOf(z)
       colour1Array.splice(index, 1)
@@ -367,25 +367,7 @@ function init() {
     }
   }
 
-  // function moveDownEachColour(inc, z) { // shift everything  higher and left over from above down one
-  //   if (colour1Array[inc] < z) {
-  //     colour1Array[inc] += width
-  //   }
-  //   if (colour2Array[inc] < z) {
-  //     colour2Array[inc] += width
-  //   }
-  //   if (colour3Array[inc] < z) {
-  //     colour3Array[inc] += width
-  //   }
-  //   if (colour4Array[inc] < z) {
-  //     colour4Array[inc] += width
-  //   }
-  //   if (colour5Array[inc] < z) {
-  //     colour5Array[inc] += width
-  //   }
-  // }
-
-  function moveDownEachColour(tetrisRowIndex) {
+  function moveDownEachColour(tetrisRowIndex) { // shift everything  higher and left over from above down one
     for (let q = 0; q < colour1Array.length; q++) {
       if (colour1Array[q] < tetrisRowIndex) {
         colour1Array[q] += width
@@ -1217,6 +1199,7 @@ function init() {
     }
   }
 
+  // First round row stats
   let row1 = new LeftRow(500, 12, [4])
   let row2 = new RightRow(500, 11, [3, 6])
   let row3 = new LeftRow(500, 10, [3, 3, 6])
@@ -1230,7 +1213,7 @@ function init() {
 
   let froggerRows = null
 
-  function setFroggerRows() {
+  function setFroggerRows() { // sets what rows/block are part of what part of the board
     froggerRows = {
       all: [row1, row2, row3, row4, row5, row6, row7, row8, row9, row10],
       road: [row1, row2, row3, row4, row5],
@@ -1244,14 +1227,14 @@ function init() {
 
   setFroggerRows()
 
-  class Frog {
+  class Frog { // Frog constructor
     constructor(position, active) {
       this.position = position
       this.active = active
     }
   }
 
-  class Item {
+  class Item { // Item constructor
     constructor(position, len) {
       this.position = position,
       this.len = len
@@ -1279,48 +1262,7 @@ function init() {
     froggerSquares[activeFrog.position].classList.add('frog')
   }
 
-  // function froggerBackgroundImageConstructor(row) {
-  //   let bg = ''
-  //   for (let i = 0; i < row.spawnRate.length; i++) {
-  //     for (let s = 0; s < row.items[0].positions.length; s++) {
-  //       if (i === row.items[0].positions.length - 1) {
-  //         bg += 'url("../assets/log_right.png")'
-  //       } else if (i === 0) {
-  //         bg += 'url("../assets/log_left.png"),'
-  //       } else {
-  //         bg += 'url("../assets/log_middle.png"),'
-  //       }
-  //     }
-  //   }
-  //   return bg
-  // }
-
-  // function froggerBackgroundPositionConstructor(row) {
-  //   let distance = '0 0,'
-  //   for (let i = 1; i < row.items[0].positions.length; i++) {
-  //     if (i !== row.items[0].positions.length - 1) {
-  //       distance += (i * 40 + 'px ' + 0 + ',')
-  //     } else {
-  //       distance += (i * 40 + 'px ' + 0)
-  //     }
-  //   }
-  //   return distance
-  // }
-
-  // function froggerRowHeightConstructor(row) {
-  //   return `${(row.row - 1) * 40}px`
-  // }
-
-  // function froggerPseudoElementCreate(row) {
-  //   document.documentElement.style.setProperty('--row_7_bg_images', froggerBackgroundImageConstructor(row7))
-  //   document.documentElement.style.setProperty('--row_7_bg_pos', froggerBackgroundPositionConstructor(row7))
-  //   document.documentElement.style.setProperty('--row_7_height', froggerRowHeightConstructor(row7))
-  //   console.log(document.documentElement.style.getPropertyValue('--row_7_bg_images'))
-  //   document.documentElement.style.setProperty('--row_7_width', (row7.items[0].positions.length) * (row7.items.length))
-  //   froggerSquares[row.startingSquare - (froggerWidth * (row.row - 1)) + row7.items.length].classList.add('row_7_test')
-  // }
-
-  function froggerItemPaint() {
+  function froggerItemPaint() { // Yeesh, not a nice function - but it handles the object painting in frogger and animation.
     froggerSquares.forEach(square => square.classList.remove(
       'log', 
       'row_1_car', 
@@ -1344,32 +1286,9 @@ function init() {
     row2.items.forEach(item => item.positions.forEach(pos => froggerSquares[pos].classList.add('row_2_car')))
     row3.items.forEach(item => item.positions.forEach(pos => froggerSquares[pos].classList.add('row_3_car')))
     row4.items.forEach(item => item.positions.forEach(pos => froggerSquares[pos].classList.add('row_4_car')))
-    // row5.items.forEach(item => {
-    //   froggerSquares[item.positions[0]].classList.add('row_5_car_front')
-    //   froggerSquares[item.positions[1]].classList.add('row_5_car_back')
-    // })
     row5.items.forEach(item => {
       froggerSquares[item.positions[0]].classList.add('row_5_test')
     })
-    // document.documentElement.style.setProperty('--row_7_bg_images', froggerBackgroundImageConstructor())
-    // document.documentElement.style.setProperty('--row_7_bg_pos', froggerBackgroundPositionConstructor())
-    // document.documentElement.style.setProperty('--row_7_width', row7.items[0].positions.length)
-    // console.log(document.documentElement.style.getPropertyValue('--row_7_bg_images'))
-    // console.log(document.documentElement.style.getPropertyValue('--row_7_bg_pos'))
-    // console.log(document.documentElement.style.getPropertyValue('--row_7_width'))
-    // froggerRows.turtles.forEach(row => row.items.forEach(item => {
-    //   froggerSquares[item.positions[0]].classList.add('row_6_test')
-    // }))
-    // froggerRows.turtles.forEach(row => row.items.forEach(item => item.positions.forEach(pos => {
-    //   froggerSquares[pos].classList.add('turtle')
-    // })))
-    // froggerSquares[row7.startingSquare + 1].classList.add('row_7_test')
-
-    // row7.items.forEach(item => item.positions.forEach(pos => {
-    //   if (pos !== row7.startingSquare) {
-    //     froggerSquares[pos].classList.add('row_7_anim')
-    //   }
-    // }))
     froggerRows.logs.forEach(row => row.items.forEach(item => item.positions.forEach(pos => {
       if (item.positions[0] === pos) {
         if (froggerRows.left.includes(row)) {
@@ -1396,12 +1315,12 @@ function init() {
     row10.items.forEach(item => item.positions.forEach(pos => froggerSquares[pos].classList.add('row_10_anim')))
   }
 
-  function froggerCreateFrog() {
+  function froggerCreateFrog() { // New Frog
     activeFrog = new Frog(froggerStartingPos, true)
     frogs.push(activeFrog)
   }
 
-  function frogDead() {
+  function frogDead() { 
     activeFrog.position = froggerStartingPos
     froggerPaintFrog()
     froggerResetState = false
