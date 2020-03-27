@@ -28,7 +28,7 @@ This games portal was my first at General Assembly, developed in Vanilla JavaScr
 
 ## Overview
 
-This project was the first of my time at General Assembly, being set only three weeks in and two after the start of our Javascript module. Due to the Christmas holidays I had an extended deadline for this project so I decided to create a portal hub for a couple of different games. I ended up finishing three games: Tetris, FL-Tron and Frogger. They all live on a single home page with a leaderboard using local storage to store the scores.
+This project was the first of my time at General Assembly, being set only three weeks in and two after the start of our JavaScript module. Due to the Christmas holidays I had an extended deadline for this project so I decided to create a portal hub for a couple of different games. I ended up finishing three games: Tetris, FL-Tron and Frogger. They all live on a single home page with a leaderboard using local storage to store the scores.
 
 Tetris is a puzzle game where blocks of varying shapes fall from the top of the board and it is the player's goal to direct and place them in such a way as to create complete rows of blocks. Tetris is a one player game where the game speeds up as certain score thresholds and the aim is simply to last as long and rack up as many points as possible.
 
