@@ -1719,7 +1719,9 @@ function init() {
   }
 
   function froggerStartTimers() {
-    if (froggerPlaying || froggerStartText.style.display === 'none' || froggerOuterContainer.style.display === 'none') return
+    if (froggerPlaying || 
+      window.getComputedStyle(froggerOuterContainer).display === 'none' || 
+      window.getComputedStyle(froggerOuterContainer).display === 'none') return
     froggerStartFunc()
     createItem(row1, 1)
     createItem(row2, 1)
