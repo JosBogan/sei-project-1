@@ -44,12 +44,25 @@
   margin-left: 40px;
   overflow: hidden;
   transform-origin: 0% 0%;
-  width: 20px;
-  border-radius: 10px;
-  max-height: 20px;
+  width: 40px;
+  border-radius: 20px;
+  max-height: 40px;
   background: rgba(0, 0, 0, 0.25);
   animation-direction: alternate;
   display: none;
+}
+
+.controls * {
+  color: rgba(0,0,0,0);
+  transition: all 0.2s;
+}
+
+.controls_opacity * {
+  color: rgba(0, 0, 0, 1);
+}
+
+.frogger_controls_opacity * {
+  color: rgba(255, 255, 255, 1);
 }
 
 .frogger_style_controls  {
@@ -58,15 +71,15 @@
   background: #000000;
 }
 
-.frogger_controls > * {
+.frogger_controls * {
   font-family: 'Press Start 2P', cursive;
-  color: #FFFFFF;
+  color: rgb(255, 255, 255);
 }
 
 .frogger_controls > h2 {
   padding: 10px 0px;
   font-family: 'Press Start 2P', cursive;
-  color: #FFFFFF;
+  /* color: #FFFFFF; */
 }
 
 
@@ -251,8 +264,8 @@ ul > li:first-child > *, ul > li:first-child{
   display: flex;
   flex-wrap: wrap;
   padding: 10px 0;
-  border-bottom: 1px solid #8cb0e6;
-  border-top: 1px solid #8cb0e6;
+  /* border-bottom: 1px solid #8cb0e6;
+  border-top: 1px solid #8cb0e6; */
   overflow: hidden;
 }
 
@@ -879,16 +892,18 @@ ul > li:first-child > *, ul > li:first-child{
 
 @keyframes controls_anim {
   0% {
-    width: 20px;
-    max-height: 20px;
+    width: 40px;
+    max-height: 40px;
   }
   50% {
     width: 250px;
-    max-height: 20px;
+    max-height: 40px;
+
   }
   100% {
     width: 250px;
     max-height: 400px;
+
   }
 }
 
@@ -896,13 +911,14 @@ ul > li:first-child > *, ul > li:first-child{
   0% {
     width: 250px;
     max-height: 400px;
+
   }
   50% {
     width: 250px;
-    max-height: 20px;
+    max-height: 40px;
   }
   100% {
-    width: 20px;
-    max-height: 20px;
+    width: 40px;
+    max-height: 40px;
   }
 }

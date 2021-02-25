@@ -1715,6 +1715,10 @@ function init() {
         break
       case 'frogger_life_animation':
         froggerLoseFunc()
+        break
+      case 'controls_anim_2':
+        controls.style.animation = ''
+        break
     }
   }
 
@@ -1814,7 +1818,10 @@ function init() {
 
   function controlsUnHover() {
     controls.style.animation = ''
+
     controls.style.animation = 'controls_anim_2 1s'
+    controls.classList.remove('controls_opacity')
+    // froggerControls.classList.remove('frogger_controls_opacity')
     // controls.style.animationFillMode = 'forwards'
   }
 
@@ -1822,6 +1829,9 @@ function init() {
     controls.style.animation = ''
     controls.style.animation = 'controls_anim 1s'
     controls.style.animationFillMode = 'forwards'    
+
+    // froggerControls.classList.add('frogger_controls_opacity')
+    controls.classList.add('controls_opacity')
   }
 
 
