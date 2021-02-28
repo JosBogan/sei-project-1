@@ -1671,6 +1671,7 @@ function init() {
   function froggerMove() {
     if (!froggerPlaying) return
     if (froggerResetState) return
+    if (window.getComputedStyle(froggerMessage).display !== 'none') return
     switch (event.key) {
       case 'ArrowUp':
         if (froggerTopCheck()) return
@@ -1722,7 +1723,15 @@ function init() {
     }
   }
 
-  function froggerStartTimers() {
+  function froggerStartTimers(event) {
+    if (window.getComputedStyle(froggerMessage).display !== 'none') {
+      if (event.key === 'n') {
+        froggerHardReset()
+      } else if (event.key === 'y') {
+        froggerStartFunc()
+      }
+      return
+    }
     if (froggerPlaying || 
       window.getComputedStyle(froggerOuterContainer).display === 'none' || 
       window.getComputedStyle(froggerOuterContainer).display === 'none') return
